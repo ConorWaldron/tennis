@@ -1,7 +1,9 @@
+'run with pytest test.py -vv'
+
 import pytest
 import pandas as pd
 
-from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before
+from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, doubles_right_order, team_tied
 
 
 # Define the fixtures
@@ -148,6 +150,7 @@ def test_has_7_unique_reg_players(proposed_team_6_players, proposed_team_same_pl
     assert expected_value == actual_value
 
 
+#@pytest.mark.skip
 def test_team_played_before(valid_team_4, reg_team_4_wrong_order, team_4_same_as_week2_wrong_order,
                             team_4_df, team_4_subs_and_lower_class_df, prev_week1_team_4, prev_week2_team_4):
     """
@@ -168,5 +171,16 @@ def test_team_played_before(valid_team_4, reg_team_4_wrong_order, team_4_same_as
     assert expected_value == actual_value
 
 
+# @pytest.mark.skip
+def test_singles_right_order():
+    pass
 
 
+# @pytest.mark.skip
+def test_doubles_right_order():
+    pass
+
+
+# @pytest.mark.skip
+def test_team_tied():
+    pass

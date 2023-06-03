@@ -52,3 +52,42 @@ def team_played_before(proposed_team, registered_team, team_subs_and_lower_teams
                     return False, f"you are using the same 7 players as week {i+1} team but {proposed_player} is not playing in the old position of {proposed_players_old_position[0:2]}"
 
     return True, None
+
+
+def singles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, relevant_team_previous_weeks):
+    """
+    Checks that no singles player is playing above someone who played above them before
+
+    :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name and Lowest_Class, for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param relevant_team_previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    pass
+
+
+def doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, relevant_team_previous_weeks):
+    """
+    Checks that no doubles pairing is playing above a different pairing that played above them before
+
+    :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name and Lowest_Class, for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param relevant_team_previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    pass
+
+
+def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, relevant_team_previous_weeks):
+    """
+    Checks that nobody is team tied and if so, it does something...
+
+    :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name and Lowest_Class, for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param relevant_team_previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    pass
