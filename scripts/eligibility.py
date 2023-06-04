@@ -16,19 +16,19 @@ def main(team_number, proposed_team):
     team_df = pd.read_csv('../assets/teams.csv')
     relevant_team = team_df[team_df['Team'] == team_number]
     relevant_team_class = relevant_team['Class'].iloc(0)[0]
-    lower_teams = team_df[team_df['Team'] > team_number][['Name', 'Class']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > team_number][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
     subs_df = pd.read_csv('../assets/subs.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= relevant_team_class]
-    team_of_interest = relevant_team[['Name', 'Class']].rename(columns={'Class': 'Lowest_Class'})
+    relevant_subs = subs_df[subs_df['Lowest_Class'] >= relevant_team_class].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = relevant_team[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
     team_subs_and_lower_teams = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
 
     previous_weeks = pd.read_csv('../assets/previous_weeks.csv')
-    relevant_team_pw = previous_weeks[previous_weeks['Team'] == team_number]
 
     # Start checking the proposed team
-    for func in [has_7_unique_reg_players, team_played_before]:
-        valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, relevant_team_pw)
+    for func in [has_7_unique_reg_players, team_played_before, singles_right_order]:
+        valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
             print(warning)
             break
@@ -37,13 +37,13 @@ def main(team_number, proposed_team):
 
 if __name__ == '__main__':
     my_proposed_team = {
-        'S1': "Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "James Fagan",
-        'S3': "James Doyle",
-        'D1': "Martin Henihan",
-        'D1B': "Peter Morgan",
-        'D2': "Russell Boland",
-        'D2B': "Peter Johnston",
+        'S3': "Conor Waldron",
+        'D1': "Peter Cloonan",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
     }
 
     eligible = main(4, my_proposed_team)

@@ -19,11 +19,12 @@ def team_4_df():
 def team_4_subs_and_lower_class_df():
     team_df = pd.read_csv('teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
-    lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
     subs_df = pd.read_csv('subs_test.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 4]
-    team_of_interest = team_4_df[['Name', 'Class']].rename(columns={'Class': 'Lowest_Class'})
+    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 4].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = team_4_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
     team_4_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     return team_4_subs_and_lower_class_df
 
@@ -45,9 +46,9 @@ def prev_week2_team_4():
 @pytest.fixture(scope='session')
 def proposed_team_6_players():
     proposed_team_6_players = {
-        'S1':"Adam Escalate",
+        'S1': "Adam Escalante",
         'S3': "Shane Bergin",
-        'D1': "PETER CLOONAN",
+        'D1': "Peter Cloonan",
         'D1B': "Bernard O'Sullivan",
         'D2': "Peter Morgan",
         'D2B': "Andrew Synnott",
@@ -58,10 +59,10 @@ def proposed_team_6_players():
 @pytest.fixture(scope='session')
 def proposed_team_same_player_twice():
     proposed_team_same_player_twice = {
-        'S1':"Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "Conor Waldron",
         'S3': "Shane Bergin",
-        'D1': "PETER CLOONAN",
+        'D1': "Peter Cloonan",
         'D1B': "Bernard O'Sullivan",
         'D2': "Peter Morgan",
         'D2B': "Conor Waldron",
@@ -72,10 +73,10 @@ def proposed_team_same_player_twice():
 @pytest.fixture(scope='session')
 def proposed_team_not_valid_sub():
     proposed_team_not_valid_sub = {
-        'S1': "Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "Conor Waldron",
         'S3': "Shane Bergin",
-        'D1': "PETER CLOONAN",
+        'D1': "Peter Cloonan",
         'D1B': "Bernard O'Sullivan",
         'D2': "Peter Morgan",
         'D2B': "Owen Casey",
@@ -86,10 +87,10 @@ def proposed_team_not_valid_sub():
 @pytest.fixture(scope='session')
 def valid_team_4():
     valid_team_4 = {
-        'S1':"Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "Conor Waldron",
         'S3': "Shane Bergin",
-        'D1': "PETER CLOONAN",
+        'D1': "Peter Cloonan",
         'D1B': "Bernard O'Sullivan",
         'D2': "Peter Morgan",
         'D2B': "Andrew Synnott",
@@ -100,20 +101,21 @@ def valid_team_4():
 @pytest.fixture(scope='session')
 def reg_team_4_wrong_order():
     reg_team_4_wrong_order = {
-        'S1':"Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "Conor Waldron",
         'S3': "Andrew Synnott",
-        'D1': "PETER CLOONAN",
+        'D1': "Peter Cloonan",
         'D1B': "Bernard O'Sullivan",
         'D2': "Peter Morgan",
         'D2B': "Shane Bergin",
     }
     return reg_team_4_wrong_order
 
+
 @pytest.fixture(scope='session')
 def team_4_same_as_week2_wrong_order():
     team_4_same_as_week2_wrong_order = {
-        'S1': "Adam Escalate",
+        'S1': "Adam Escalante",
         'S2': "James Fagan",
         'S3': "James Doyle",
         'D1': "Martin Henihan",
@@ -122,6 +124,48 @@ def team_4_same_as_week2_wrong_order():
         'D2B': "Peter Johnston",
     }
     return team_4_same_as_week2_wrong_order
+
+
+@pytest.fixture(scope='session')
+def team_4_singles_out_order():
+    team_4_singles_out_order = {
+        'S1': "Adam Escalante",
+        'S2': "Shane Bergin",
+        'S3': "Conor Waldron",
+        'D1': "Peter Cloonan",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
+    }
+    return team_4_singles_out_order
+
+
+@pytest.fixture(scope='session')
+def team_4_singles_out_order_class():
+    team_4_singles_out_order_class = {
+        'S1': "Adam Escalante",
+        'S2': "Brian Masterson",
+        'S3': "Conor Waldron",
+        'D1': "Peter Cloonan",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
+    }
+    return team_4_singles_out_order_class
+
+
+@pytest.fixture(scope='session')
+def team_4_singles_out_order_team():
+    team_4_singles_out_order_team = {
+        'S1': "Adam Escalante",
+        'S2': "James Fagan",
+        'S3': "Conor Waldron",
+        'D1': "Peter Cloonan",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
+    }
+    return team_4_singles_out_order_team
 
 
 #@pytest.mark.skip
@@ -172,8 +216,27 @@ def test_team_played_before(valid_team_4, reg_team_4_wrong_order, team_4_same_as
 
 
 # @pytest.mark.skip
-def test_singles_right_order():
-    pass
+def test_singles_right_order(valid_team_4, team_4_singles_out_order, team_4_singles_out_order_class, team_4_singles_out_order_team,
+                             team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4):
+    """
+    Checks that
+    you never play a singles player above someone who has played before them before
+    """
+    expected_value = True, None
+    actual_value = singles_right_order(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'You are playing Shane Bergin ahead of Conor Waldron but that violates a previous weeks order'
+    actual_value = singles_right_order(team_4_singles_out_order, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'You are playing Brian Masterson (class 5) ahead of Conor Waldron (class 4)'
+    actual_value = singles_right_order(team_4_singles_out_order_class, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'You are playing James Fagan (team 5) ahead of Conor Waldron (team 4)'
+    actual_value = singles_right_order(team_4_singles_out_order_team, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
 
 
 # @pytest.mark.skip
