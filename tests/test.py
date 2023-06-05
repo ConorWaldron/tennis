@@ -10,6 +10,13 @@ from tennis.eligibility_rules import has_7_unique_reg_players, team_played_befor
 # Define the fixtures
 
 @pytest.fixture(scope='session')
+def team_7_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_7_df = team_df[team_df['Team'] == 7]
+    return team_7_df
+
+
+@pytest.fixture(scope='session')
 def team_4_df():
     team_df = pd.read_csv('teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
@@ -28,6 +35,20 @@ def team_2_df():
     team_df = pd.read_csv('teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
     return team_2_df
+
+
+@pytest.fixture(scope='session')
+def team_7_subs_and_lower_class_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_7_df = team_df[team_df['Team'] == 7]
+    lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+
+    subs_df = pd.read_csv('subs_test.csv')
+    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 7].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = team_7_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_7_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
+    return team_7_subs_and_lower_class_df
 
 
 @pytest.fixture(scope='session')
@@ -98,6 +119,13 @@ def prev_week2_team_2():
     prev_week2 = pd.read_csv('after_week2.csv')
     prev_week2_team_2 = prev_week2[prev_week2['Team'] == 2]
     return prev_week2_team_2
+
+
+@pytest.fixture(scope='session')
+def prev_week3_team_7():
+    prev_week3 = pd.read_csv('after_week3.csv')
+    prev_week3_team_7 = prev_week3[prev_week3['Team'] == 7]
+    return prev_week3_team_7
 
 
 @pytest.fixture(scope='session')
@@ -281,6 +309,34 @@ def team_2_invalid_doubles_order():
     return team_2_invalid_doubles_order
 
 
+@pytest.fixture(scope='session')
+def valid_team_7():
+    valid_team_7 = {
+        'S1': "Kabir Kalia",
+        'S2': "Rory Aherne",
+        'S3': "Darragh Moran",
+        'D1': "Stephen O'Meara",
+        'D1B': "Eoghan O'Meara",
+        'D2': "Max Lebrocquy",
+        'D2B': "Ryan McGrath",
+    }
+    return valid_team_7
+
+
+@pytest.fixture(scope='session')
+def invalid_team_7_team_tied():
+    invalid_team_7_team_tied = {
+        'S1': "Kabir Kalia",
+        'S2': "Rory Aherne",
+        'S3': "Darragh Moran",
+        'D1': "Stephen O'Meara",
+        'D1B': "Eoghan O'Meara",
+        'D2': "Max Lebrocquy",
+        'D2B': "Ryan McGrath",
+    }
+    return invalid_team_7_team_tied
+
+
 #@pytest.mark.skip
 def test_has_7_unique_reg_players(proposed_team_6_players, proposed_team_same_player_twice, proposed_team_not_valid_sub,
                                   valid_team_4, team_4_df, team_4_subs_and_lower_class_df):
@@ -399,8 +455,19 @@ def test_doubles_right_order(valid_team_4, team_3_invalid_doubles_order, team_2_
 
 
 # @pytest.mark.skip
-def test_team_tied(valid_team_4,
-                   team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4):
+def test_team_tied(valid_team_4, valid_team_7, invalid_team_7_team_tied,
+                   team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4,
+                   team_7_df, team_7_subs_and_lower_class_df, prev_week3_team_7):
     expected_value = True, None
     actual_value = team_tied(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
     assert expected_value == actual_value
+
+    expected_value = ?
+    actual_value = team_tied(valid_team_7, team_7_df, team_7_subs_and_lower_class_df, prev_week3_team_7)
+    assert expected_value == actual_value
+
+    # warning something strange, kabir is team tied after week 3 but rule is not trigger here!
+
+    #expected_value = False, '{player} is inelgiible due to team tying, he has played for a higher team on {len(higher_teams)} occasions'
+    #actual_value = team_tied(invalid_team_7_team_tied, team_7_df, team_7_subs_and_lower_class_df, prev_week3_team_7)
+    #assert expected_value == actual_value

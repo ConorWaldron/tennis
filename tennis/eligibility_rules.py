@@ -237,4 +237,23 @@ def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, previou
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
+    for player in proposed_team.values():
+        teams_played_for = []
+        for i in range(5):
+            week = 'Week' + str(i + 1)
+            that_week = previous_weeks[['Team', 'Position', week]]
+            player1_played_previous = that_week[that_week[week] == player][['Team']].values
+            for match in player1_played_previous:
+                teams_played_for.append(match[0])
+
+        # Check if they have played for a higher team more than once
+        current_team = registered_team['Team'].iloc(0)[0]
+        higher_teams = []
+        for team in teams_played_for:
+            if team < current_team:
+                higher_teams.append(team)
+
+        if len(higher_teams) > 1:
+            return False, f'{player} is inelgiible due to team tying, he has played for a higher team on {len(higher_teams)} occasions'
+
     return True, None

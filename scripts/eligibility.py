@@ -39,16 +39,16 @@ def main(team_number, proposed_team):
 
 if __name__ == '__main__':
     my_proposed_team = {
-        'S1': "Caleb Mok",
-        'S2': "Mark Cloonan",
-        'S3': "Conor Waldron",
-        'D1': "Jerry Sheehan",
-        'D1B': "Conor O'Neill",
-        'D2': "Jimmy McDonogh",
-        'D2B': "Justin Purcell",
+        'S1': "Kabir Kalia",
+        'S2': "Rory Aherne",
+        'S3': "Darragh Moran",
+        'D1': "Stephen O'Meara",
+        'D1B': "Eoghan O'Meara",
+        'D2': "Max Lebrocquy",
+        'D2B': "Ryan McGrath",
     }
 
-    eligible = main(3, my_proposed_team)
+    eligible = main(7, my_proposed_team)
     if eligible:
         print('team is eligible')
     else:
