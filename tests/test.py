@@ -3,7 +3,8 @@
 import pytest
 import pandas as pd
 
-from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, doubles_right_order, team_tied
+from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order,\
+    doubles_team_and_class_checker, doubles_right_order, team_tied
 
 
 # Define the fixtures
@@ -13,6 +14,20 @@ def team_4_df():
     team_df = pd.read_csv('teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
     return team_4_df
+
+
+@pytest.fixture(scope='session')
+def team_3_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_3_df = team_df[team_df['Team'] == 3]
+    return team_3_df
+
+
+@pytest.fixture(scope='session')
+def team_2_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_2_df = team_df[team_df['Team'] == 2]
+    return team_2_df
 
 
 @pytest.fixture(scope='session')
@@ -30,6 +45,34 @@ def team_4_subs_and_lower_class_df():
 
 
 @pytest.fixture(scope='session')
+def team_3_subs_and_lower_class_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_3_df = team_df[team_df['Team'] == 3]
+    lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+
+    subs_df = pd.read_csv('subs_test.csv')
+    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 3].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = team_3_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_3_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
+    return team_3_subs_and_lower_class_df
+
+
+@pytest.fixture(scope='session')
+def team_2_subs_and_lower_class_df():
+    team_df = pd.read_csv('teams_test.csv')
+    team_2_df = team_df[team_df['Team'] == 2]
+    lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+
+    subs_df = pd.read_csv('subs_test.csv')
+    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 2].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = team_2_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_2_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
+    return team_2_subs_and_lower_class_df
+
+
+@pytest.fixture(scope='session')
 def prev_week1_team_4():
     prev_week1 = pd.read_csv('after_week1.csv')
     prev_week1_team_4 = prev_week1[prev_week1['Team'] == 4]
@@ -41,6 +84,20 @@ def prev_week2_team_4():
     prev_week2 = pd.read_csv('after_week2.csv')
     prev_week2_team_4 = prev_week2[prev_week2['Team'] == 4]
     return prev_week2_team_4
+
+
+@pytest.fixture(scope='session')
+def prev_week2_team_3():
+    prev_week2 = pd.read_csv('after_week2.csv')
+    prev_week2_team_3 = prev_week2[prev_week2['Team'] == 3]
+    return prev_week2_team_3
+
+
+@pytest.fixture(scope='session')
+def prev_week2_team_2():
+    prev_week2 = pd.read_csv('after_week2.csv')
+    prev_week2_team_2 = prev_week2[prev_week2['Team'] == 2]
+    return prev_week2_team_2
 
 
 @pytest.fixture(scope='session')
@@ -168,6 +225,62 @@ def team_4_singles_out_order_team():
     return team_4_singles_out_order_team
 
 
+@pytest.fixture(scope='session')
+def team_4_invalid_doubles_class():
+    team_4_invalid_doubles_class = {
+        'S1': "Adam Escalante",
+        'S2': "Conor Waldron",
+        'S3': "Shane Bergin",
+        'D1': "Brian Masterson",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
+    }
+    return team_4_invalid_doubles_class
+
+
+@pytest.fixture(scope='session')
+def team_4_invalid_doubles_team():
+    team_4_invalid_doubles_team = {
+        'S1': "Adam Escalante",
+        'S2': "Conor Waldron",
+        'S3': "Shane Bergin",
+        'D1': "Russell Boland",
+        'D1B': "Bernard O'Sullivan",
+        'D2': "Peter Morgan",
+        'D2B': "Andrew Synnott",
+    }
+    return team_4_invalid_doubles_team
+
+
+@pytest.fixture(scope='session')
+def team_3_invalid_doubles_order():
+    team_3_invalid_doubles_order = {
+        'S1': "Caleb Mok",
+        'S2': "Mark Cloonan",
+        'S3': "Conor Waldron",
+        'D1': "Jerry Sheehan",
+        'D1B': "Conor O'Neill",
+        'D2': "Jimmy McDonogh",
+        'D2B': "Justin Purcell",
+    }
+    return team_3_invalid_doubles_order
+
+
+@pytest.fixture(scope='session')
+def team_2_invalid_doubles_order():
+    team_2_invalid_doubles_order = {
+        'S1': "Joe Kelleher",
+        'S2': "Mark Cloonan",
+        'S3': "Conor Waldron",
+        'D1': "Tom Brophy",
+        'D1B': "Eoin Donohoe",
+        'D2': "Fernando Mayorga",
+        'D2B': "Ivan Casinillo",
+    }
+    return team_2_invalid_doubles_order
+
+
 #@pytest.mark.skip
 def test_has_7_unique_reg_players(proposed_team_6_players, proposed_team_same_player_twice, proposed_team_not_valid_sub,
                                   valid_team_4, team_4_df, team_4_subs_and_lower_class_df):
@@ -221,6 +334,8 @@ def test_singles_right_order(valid_team_4, team_4_singles_out_order, team_4_sing
     """
     Checks that
     you never play a singles player above someone who has played before them before
+    you never play a singles player above someone of a better class
+    you never play a singles player above someone from a higher team
     """
     expected_value = True, None
     actual_value = singles_right_order(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
@@ -240,10 +355,52 @@ def test_singles_right_order(valid_team_4, team_4_singles_out_order, team_4_sing
 
 
 # @pytest.mark.skip
-def test_doubles_right_order():
-    pass
+def test_doubles_team_and_class_checker(valid_team_4, team_4_invalid_doubles_class, team_4_invalid_doubles_team,
+                             team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4):
+    """
+    Checks that
+    you never play a doubles player above someone of a better class
+    you never play a doubles player above someone from a higher team
+    """
+    expected_value = True, None
+    actual_value = doubles_team_and_class_checker(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'Your 2nd doubles contains a class 4 player which is better than one of the players on your first doubles (class 5)'
+    actual_value = doubles_team_and_class_checker(team_4_invalid_doubles_class, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'Your 2nd doubles contains a player registered to team 4 which is better than one of the players on your first doubles (registered to team 5)'
+    actual_value = doubles_team_and_class_checker(team_4_invalid_doubles_team, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
 
 
 # @pytest.mark.skip
-def test_team_tied():
-    pass
+def test_doubles_right_order(valid_team_4, team_3_invalid_doubles_order, team_2_invalid_doubles_order,
+                             team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4,
+                             team_3_df, team_3_subs_and_lower_class_df, prev_week2_team_3,
+                             team_2_df, team_2_subs_and_lower_class_df, prev_week2_team_2):
+    """
+    Checks that
+    you never play a doubles player above someone who has played before them before
+    you never play a 2nd doubles reg team ahead of a 1st doubles reg team
+    """
+    expected_value = True, None
+    actual_value = doubles_right_order(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value
+
+    expected_value = False, 'Your 2nd doubles pairing have played above your first doubles pairing in a previous week'
+    actual_value = doubles_right_order(team_2_invalid_doubles_order, team_2_df, team_2_subs_and_lower_class_df, prev_week2_team_2)
+    assert expected_value == actual_value
+
+    expected_value = False, 'all 4 registered players are playing doubles, but not in the right order'
+    actual_value = doubles_right_order(team_3_invalid_doubles_order, team_3_df, team_3_subs_and_lower_class_df, prev_week2_team_3)
+    assert expected_value == actual_value
+
+
+# @pytest.mark.skip
+def test_team_tied(valid_team_4,
+                   team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4):
+    expected_value = True, None
+    actual_value = team_tied(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2_team_4)
+    assert expected_value == actual_value

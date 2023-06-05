@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 
-from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, doubles_right_order, team_tied
+from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, \
+    doubles_team_and_class_checker, doubles_right_order, team_tied
 
 
 
@@ -27,7 +28,8 @@ def main(team_number, proposed_team):
     previous_weeks = pd.read_csv('../assets/previous_weeks.csv')
 
     # Start checking the proposed team
-    for func in [has_7_unique_reg_players, team_played_before, singles_right_order]:
+    for func in [has_7_unique_reg_players, team_played_before, singles_right_order, doubles_team_and_class_checker,
+                 doubles_right_order, team_tied]:
         valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
             print(warning)
@@ -37,16 +39,16 @@ def main(team_number, proposed_team):
 
 if __name__ == '__main__':
     my_proposed_team = {
-        'S1': "Adam Escalante",
-        'S2': "James Fagan",
+        'S1': "Caleb Mok",
+        'S2': "Mark Cloonan",
         'S3': "Conor Waldron",
-        'D1': "Peter Cloonan",
-        'D1B': "Bernard O'Sullivan",
-        'D2': "Peter Morgan",
-        'D2B': "Andrew Synnott",
+        'D1': "Jerry Sheehan",
+        'D1B': "Conor O'Neill",
+        'D2': "Jimmy McDonogh",
+        'D2B': "Justin Purcell",
     }
 
-    eligible = main(4, my_proposed_team)
+    eligible = main(3, my_proposed_team)
     if eligible:
         print('team is eligible')
     else:

@@ -119,6 +119,54 @@ def singles_right_order(proposed_team, registered_team, team_subs_and_lower_team
 
 
 
+def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+    """
+    Checks that no doubles player is playing above someone of a better class
+    Checks that no doubles player is playing above someone from a better team
+
+    :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    class_D1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['D1']]['Lowest_Class'].iloc(0)[0]
+    team_D1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1']]['Team'].iloc(0)[0]
+    class_D1B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1B']]['Lowest_Class'].iloc(0)[0]
+    team_D1B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1B']]['Team'].iloc(0)[0]
+    class_D2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2']]['Lowest_Class'].iloc(0)[0]
+    team_D2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2']]['Team'].iloc(0)[0]
+    class_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Lowest_Class'].iloc(0)[0]
+    team_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Team'].iloc(0)[0]
+
+    weakest_class_d1_pair = max(class_D1, class_D1B)
+    strongest_class_d2_pair = min(class_D2, class_D2B)
+    if weakest_class_d1_pair > strongest_class_d2_pair:
+        return False, f'Your 2nd doubles contains a class {strongest_class_d2_pair} player which is better than one of the players on your first doubles (class {weakest_class_d1_pair})'
+
+    if (team_D1 != 'Sub') | (team_D1B != 'Sub'):
+        # find the max (worst_ registered team in the D1 pair
+        if (team_D1 != 'Sub') & (team_D1B != 'Sub'):
+            max_D1_reg_team = max(team_D1, team_D1B)
+        elif (team_D1 != 'Sub') & (team_D1B == 'Sub'):
+            max_D1_reg_team = team_D1
+        elif (team_D1 == 'Sub') & (team_D1B != 'Sub'):
+            max_D1_reg_team = team_D1B
+
+        # find the min (best) registered team in the D2 pair
+        if (team_D2 != 'Sub') & (team_D2B != 'Sub'):
+            min_D2_reg_team = min(team_D2, team_D2B)
+        elif (team_D2 != 'Sub') & (team_D2B == 'Sub'):
+            min_D2_reg_team = team_D2
+        elif (team_D2 == 'Sub') & (team_D2B != 'Sub'):
+            min_D2_reg_team = team_D2B
+
+        if min_D2_reg_team < max_D1_reg_team:
+            return False, f'Your 2nd doubles contains a player registered to team {min_D2_reg_team} which is better than one of the players on your first doubles (registered to team {max_D1_reg_team})'
+
+    return True, None
+
+
 def doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
     Checks that no doubles pairing is playing above a different pairing that played above them before
@@ -129,7 +177,54 @@ def doubles_right_order(proposed_team, registered_team, team_subs_and_lower_team
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
-    pass
+    registered_4_doubles_players = set()
+    proposed_4_doubles_players = set()
+    for pos in ['D1', 'D1B', 'D2', 'D2B']:
+        registered_4_doubles_players.add(registered_team[registered_team['Position']==pos]['Name'].iloc(0)[0])
+        proposed_4_doubles_players.add(proposed_team[pos])
+    if registered_4_doubles_players == proposed_4_doubles_players:
+        # you must play D1 above D2
+        first_doubles_reg_pair = set()
+        first_doubles_reg_pair.add(registered_team[registered_team['Position'] == 'D1']['Name'].iloc(0)[0])
+        first_doubles_reg_pair.add(registered_team[registered_team['Position'] == 'D1B']['Name'].iloc(0)[0])
+
+        first_doubles_pair = set()
+        first_doubles_pair.add(proposed_team['D1'])
+        first_doubles_pair.add(proposed_team['D1B'])
+
+        if first_doubles_reg_pair != first_doubles_pair:
+            return False, 'all 4 registered players are playing doubles, but not in the right order'
+
+    # Find any matches they have played TOGETHER previously, then build set_partnerships_above
+    list_partnerships_above = [] # using list instead of set as you cant have nested sets in python due to hashable objects...
+    for i in range(5):
+        week = 'Week' + str(i + 1)
+        that_week = previous_weeks[['Team', 'Position', week]]
+        player1_played_previous = that_week[that_week[week] == proposed_team['D1']][['Team', 'Position']].values
+        player2_played_previous = that_week[that_week[week] == proposed_team['D1B']][['Team', 'Position']].values
+        # Check did they play on the same team, warning either player could have played twice or more times in same week
+        for player_1_old_team, player_1_old_pos in player1_played_previous:
+            for player_2_old_team, player_2_old_pos in player2_played_previous:
+                if player_1_old_team == player_2_old_team:
+                    set_old_pos = set()
+                    set_old_pos.add(player_1_old_pos)
+                    set_old_pos.add(player_2_old_pos)
+                    if set_old_pos == {'D2', 'D2B'}: # we only care if they played D2 as we are looking for list of players who played above
+                        higher_pairing = set()
+                        D1_player = that_week[(that_week['Team'] == player_1_old_team) & (that_week['Position'] == 'D1')][week].iloc(0)[0]
+                        higher_pairing.add(D1_player)
+                        D1B_player = that_week[(that_week['Team'] == player_1_old_team) & (that_week['Position'] == 'D1B')][week].iloc(0)[0]
+                        higher_pairing.add(D1B_player)
+                        list_partnerships_above.append(higher_pairing)
+
+    # check if the 2nd doubles pairing is in the list of doubles pairs who have ever played above
+    second_doubles_pair = set()
+    second_doubles_pair.add(proposed_team['D2'])
+    second_doubles_pair.add(proposed_team['D2B'])
+    if second_doubles_pair in list_partnerships_above:
+        return False, 'Your 2nd doubles pairing have played above your first doubles pairing in a previous week'
+
+    return True, None
 
 
 def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
@@ -142,4 +237,4 @@ def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, previou
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
-    pass
+    return True, None
