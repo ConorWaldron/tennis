@@ -17,7 +17,7 @@ app.title = 'Tennis League Eligibility Checker'  # set the title to appear in th
 ########################### Define all my content #####################################################################
 
 gender_dropdown = dbc.DropdownMenu(
-    label="Gender",
+    label="Select Gender",
     children=[
         dbc.DropdownMenuItem("Ladies"),
         dbc.DropdownMenuItem("Men's"),
@@ -56,6 +56,23 @@ drop_down_menus = html.Div(
     ]
 )
 
+reg_team = pd.read_csv('../assets/teams.csv')
+reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
+reg_team_relevant = reg_team_relevant.rename(columns={'Name': 'Registered'})
+
+prev_weeks = pd.read_csv('../assets/previous_weeks.csv')
+reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Position'])
+
+DashTableMainBody = html.Div(
+    [
+    dash_table.DataTable(
+        id='RegPrevWeekTable',
+        columns=[{"name": i, "id": i} for i in reg_team_prev_weeks.columns],
+        data=reg_team_prev_weeks.to_dict('records'),
+        )
+    ]
+)
+
 left_right_sections_for_top = dbc.Container(
     [
         dbc.Row(
@@ -64,14 +81,8 @@ left_right_sections_for_top = dbc.Container(
                 dbc.Col(instruct_tab, width=6)
             ]
 
-        ),
-        dbc.Row(
-            [
-                dbc.Col(html.Div('middle section 1'), width=4),
-                dbc.Col(html.Div('middle section 2'), width=4),
-                dbc.Col(html.Div('middle section 3'), width=4)
-            ]
         )
+
     ]
 )
 
@@ -79,13 +90,7 @@ left_right_sections_for_top = dbc.Container(
 top_section = html.Div(
     [
     html.H2('Web App to Check if League Team meets DLTC Eligibility Rules'),
-    left_right_sections_for_top
-    ]
-)
-
-middle_section = html.Div(
-    [
-    html.H4('is anything here')
+    DashTableMainBody
     ]
 )
 
@@ -93,18 +98,11 @@ middle_section = html.Div(
 content = html.Div(
     [
     top_section,
-    middle_section
     ]
 )
 app.layout = content
 
 
 if __name__ == '__main__':
-    #app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
-"""
-########################### Define all my callback ####################################################################
-
-
-"""
+    app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh
+    #app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
