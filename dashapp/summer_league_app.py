@@ -26,37 +26,37 @@ reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
 reg_team_relevant = reg_team_relevant.rename(columns={'Name': 'Registered'})
 
 reg_subs = pd.read_csv('../assets/subs.csv')
+reg_subs.rename(columns={'Lowest_Class': 'Class'}, inplace=True)
 
 prev_weeks = pd.read_csv('../assets/previous_weeks.csv')
 reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Position'])
 
-registered_players_series = pd.concat([reg_team['Name'], reg_subs['Name']])
-registered_players_df = pd.DataFrame({'Name': registered_players_series})
-registered_players_list = registered_players_series.tolist()
+registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
+registered_players_list = registered_players_df['Name'].tolist()
 
 
 ########################### Define all my content #####################################################################
 
-gender_dropdown = dbc.DropdownMenu(
-    label="Select Gender",
-    children=[
-        dbc.DropdownMenuItem("Ladies"),
-        dbc.DropdownMenuItem("Men's"),
-    ],
-)
+gender_dropdown = html.Div([
+    html.H4("Gender Selection"),
+    dcc.Dropdown(
+        id='gender-dropdown',
+        options=[{'label': gender, 'value': gender} for gender in ['Male', 'Female']],
+        value=None,  # Set the default value to be None
+        placeholder="Please select gender"  # Set the placeholder text
+    ),
+    html.Div(id='selected-gender-output')
+])
 
-team_dropdown = dbc.DropdownMenu(
-    label="Team Number",
-    children=[
-        dbc.DropdownMenuItem("1"),
-        dbc.DropdownMenuItem("2"),
-        dbc.DropdownMenuItem("3"),
-        dbc.DropdownMenuItem("4"),
-        dbc.DropdownMenuItem("5"),
-        dbc.DropdownMenuItem("6"),
-        dbc.DropdownMenuItem("7"),
-    ],
-)
+team_dropdown = html.Div([
+    html.H4("Team Selection"),
+    dcc.Dropdown(
+        id='team-dropdown',
+        options=[{'label': str(team), 'value': team} for team in reg_team['Team'].unique()],
+        value=1  # Set the default value to the first team number
+    ),
+    html.Div(id='selected-team-output')
+])
 
 drop_down_menus = html.Div(
     [
@@ -99,10 +99,10 @@ player_selection = html.Div([
 available_players = html.Div([
     html.H2('Below is the list of registered players who could play on this team'),
     dash_table.DataTable(
-            id='table',
+            id='available_player_table',
             columns=[{'name': col, 'id': col} for col in registered_players_df.columns],
             data=registered_players_df.to_dict('records'),
-            style_table={'maxHeight': '300px', 'maxWidth': '200px', 'overflowY': 'auto'},  # Limit height and enable scrolling
+            style_table={'maxHeight': '300px', 'maxWidth': '300px', 'overflowY': 'auto'},  # Limit height and enable scrolling
             fixed_rows={'headers': True, 'data': 0}  # Fix header row
         )
 ])
@@ -140,7 +140,6 @@ left_right_sections_for_middle = dbc.Container(
     ]
 )
 
-
 top_section = html.Div(
     [
     html.H2('Web App to Check if League Team meets DLTC Eligibility Rules'),
@@ -159,6 +158,25 @@ content = html.Div(
 app.layout = content
 
 ########################### Define all my callbacks #####################################################################
+
+@app.callback(
+    Output('selected-gender-output', 'children'),
+    [Input('gender-dropdown', 'value')]
+)
+def update_gender_output(selected_gender):
+    if selected_gender is not None:
+        return f"You have selected gender: {selected_gender}"
+    else:
+        return "Please select gender"
+
+
+@app.callback(
+    Output('selected-team-output', 'children'),
+    [Input('team-dropdown', 'value')]
+)
+def update_team_output(selected_team):
+    return f"You have chosen team {selected_team}"
+
 """
 # auto suggestion for many text boxes, but it doesnt work for me
 @app.callback(
@@ -230,6 +248,17 @@ def update_suggested_player_6(value):
 )
 def update_suggested_player_7(value):
     return update_suggested_player(value, registered_players_list)
+
+
+@app.callback(
+    Output('available_player_table', 'data'),
+    [Input('team-dropdown', 'value')]
+)
+def update_table_data(selected_team):
+    # Filter the registered_players_df based on the selected_team
+    filtered_df = registered_players_df[registered_players_df['Class'] == selected_team]
+    # Convert the filtered DataFrame to dict to update DataTable data
+    return filtered_df.to_dict('records')
 
 
 if __name__ == '__main__':
