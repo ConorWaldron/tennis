@@ -6,7 +6,7 @@ from tennis.eligibility_rules import has_7_unique_reg_players, team_played_befor
 
 
 
-def main(team_number, proposed_team):
+def summer_league_eligibility(team_number, proposed_team):
     """
     :param team_number, int
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
@@ -32,24 +32,5 @@ def main(team_number, proposed_team):
                  doubles_right_order, team_tied]:
         valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
-            print(warning)
-            break
-    return valid
-
-
-if __name__ == '__main__':
-    my_proposed_team = {
-        'S1': "Kabir Kalia",
-        'S2': "Rory Aherne",
-        'S3': "Darragh Moran",
-        'D1': "Stephen O'Meara",
-        'D1B': "Eoghan O'Meara",
-        'D2': "Max Lebrocquy",
-        'D2B': "Ryan McGrath",
-    }
-
-    eligible = main(7, my_proposed_team)
-    if eligible:
-        print('team is eligible')
-    else:
-        print('team is not eligible')
+            return valid, warning
+    return valid, 'This team meets all the eligibility rules'

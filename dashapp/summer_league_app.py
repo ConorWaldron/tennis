@@ -12,6 +12,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import os
 
+from tennis.summer_league import summer_league_eligibility
+
 from dashapp.tennis_callbacks import update_suggested_player
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -51,7 +53,7 @@ gender_dropdown = html.Div([
 team_dropdown = html.Div([
     html.H4("Team Selection"),
     dcc.Dropdown(
-        id='team-dropdown',
+        id='team_dropdown',
         options=[{'label': str(team), 'value': team} for team in reg_team['Team'].unique()],
         value=1  # Set the default value to the first team number
     ),
@@ -78,26 +80,43 @@ instruct_tab = dbc.Card(
 )
 
 player_selection = html.Div([
-    html.H2('Select Your Team Here'),
-    html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's coplete name"),
-    dcc.Input(id='input-player-1', type='text', placeholder='Singles 1'),
-    html.Div(id='output-player-1'),
-    dcc.Input(id='input-player-2', type='text', placeholder='Singles 2'),
-    html.Div(id='output-player-2'),
-    dcc.Input(id='input-player-3', type='text', placeholder='Singles 3'),
-    html.Div(id='output-player-3'),
-    dcc.Input(id='input-player-4', type='text', placeholder='Doubles 1'),
-    html.Div(id='output-player-4'),
-    dcc.Input(id='input-player-5', type='text', placeholder='Doubles 1'),
-    html.Div(id='output-player-5'),
-    dcc.Input(id='input-player-6', type='text', placeholder='Doubles 2'),
-    html.Div(id='output-player-6'),
-    dcc.Input(id='input-player-7', type='text', placeholder='Doubles 2'),
-    html.Div(id='output-player-7'),
+    html.Div(dbc.Button("Disable autoprompts", id="autoprompts-button", color="primary", className="me-1")),
+    dcc.Input(id='input_player_1', type='text', placeholder='Singles 1'),
+    html.Div(id='autoprompt-output-player-1'),
+    dcc.Input(id='input_player_2', type='text', placeholder='Singles 2'),
+    html.Div(id='autoprompt-output-player-2'),
+    dcc.Input(id='input_player_3', type='text', placeholder='Singles 3'),
+    html.Div(id='autoprompt-output-player-3'),
+    dcc.Input(id='input_player_4', type='text', placeholder='Doubles 1'),
+    html.Div(id='autoprompt-output-player-4'),
+    dcc.Input(id='input_player_5', type='text', placeholder='Doubles 1'),
+    html.Div(id='autoprompt-output-player-5'),
+    dcc.Input(id='input_player_6', type='text', placeholder='Doubles 2'),
+    html.Div(id='autoprompt-output-player-6'),
+    dcc.Input(id='input_player_7', type='text', placeholder='Doubles 2'),
+    html.Div(id='autoprompt-output-player-7'),
 ])
 
+check_eligibility_area = html.Div([
+    html.Div(dbc.Button("Check Team Eligibility", id="eligibility-button", n_clicks=0, color="primary", className="me-1")),
+    html.Div([
+        dbc.Button("Eligible", id="button-true", color="secondary",),
+        dbc.Button("Ineligible", id="button-false", color="secondary",),
+    ]),
+    html.Div(id='eligibility-output'),
+])
+
+
+team_selection_area = html.Div([
+    html.H2('Select Your Team Here'),
+    html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's coplete name"),
+    player_selection,
+    check_eligibility_area
+])
+
+
 available_players = html.Div([
-    html.H2('Below is the list of registered players who could play on this team'),
+    html.H2('Below is the list of players registered at or below this team'),
     dash_table.DataTable(
             id='available_player_table',
             columns=[{'name': col, 'id': col} for col in registered_players_df.columns],
@@ -133,7 +152,7 @@ left_right_sections_for_middle = dbc.Container(
     [
         dbc.Row(
             [
-                dbc.Col(player_selection, width=6),
+                dbc.Col(team_selection_area, width=6),
                 dbc.Col(available_players, width=6)
             ]
         )
@@ -172,10 +191,27 @@ def update_gender_output(selected_gender):
 
 @app.callback(
     Output('selected-team-output', 'children'),
-    [Input('team-dropdown', 'value')]
+    [Input('team_dropdown', 'value')]
 )
 def update_team_output(selected_team):
     return f"You have chosen team {selected_team}"
+
+
+@app.callback(
+    Output("autoprompts-button", "color"),
+    Input("autoprompts-button", "n_clicks"),
+)
+def toggle_autoprompts(n_clicks):
+    if n_clicks is None:
+        n_clicks = 0
+
+    # Toggle between primary color (on) and secondary color (off)
+    if n_clicks % 2 == 1:
+        new_color = "secondary"
+    else:
+        new_color = "primary"
+
+    return new_color
 
 """
 # auto suggestion for many text boxes, but it doesnt work for me
@@ -195,68 +231,122 @@ def update_output(value):
 
 # auto suggestion for a single text box
 @app.callback(
-    Output('output-player-1', 'children'),
-    [Input('input-player-1', 'value')]
+    Output('autoprompt-output-player-1', 'children'),
+    Input('input_player_1', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_1(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_1(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-2', 'children'),
-    [Input('input-player-2', 'value')]
+    Output('autoprompt-output-player-2', 'children'),
+    Input('input_player_2', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_2(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_2(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-3', 'children'),
-    [Input('input-player-3', 'value')]
+    Output('autoprompt-output-player-3', 'children'),
+    Input('input_player_3', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_3(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_3(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-4', 'children'),
-    [Input('input-player-4', 'value')]
+    Output('autoprompt-output-player-4', 'children'),
+    Input('input_player_4', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_4(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_4(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-5', 'children'),
-    [Input('input-player-5', 'value')]
+    Output('autoprompt-output-player-5', 'children'),
+    Input('input_player_5', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_5(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_5(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-6', 'children'),
-    [Input('input-player-6', 'value')]
+    Output('autoprompt-output-player-6', 'children'),
+    Input('input_player_6', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_6(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_6(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
 
 
 @app.callback(
-    Output('output-player-7', 'children'),
-    [Input('input-player-7', 'value')]
+    Output('autoprompt-output-player-7', 'children'),
+    Input('input_player_7', 'value'),
+    Input("autoprompts-button", "n_clicks"),
 )
-def update_suggested_player_7(value):
-    return update_suggested_player(value, registered_players_list)
+def update_suggested_player_7(value, n_clicks):
+    return update_suggested_player(value, registered_players_list, n_clicks)
+
+
+@app.callback(
+    Output("button-true", "color"),
+    Output("button-false", "color"),
+    Output("eligibility-output", "children"),
+    Input("eligibility-button", "n_clicks"),
+    State("team_dropdown", "value"),
+    State("input_player_1", "value"),
+    State("input_player_2", "value"),
+    State("input_player_3", "value"),
+    State("input_player_4", "value"),
+    State("input_player_5", "value"),
+    State("input_player_6", "value"),
+    State("input_player_7", "value"),
+)
+def update_eligibility_result_button_state(n_clicks, team_dropdown, input_player_1, input_player_2, input_player_3, input_player_4,
+                                           input_player_5, input_player_6, input_player_7):
+    if n_clicks is None or n_clicks == 0:
+        return 'secondary', 'secondary', 'Have not run eligibility checker yet'
+
+    my_proposed_team = {
+        'S1': input_player_1,
+        'S2': input_player_2,
+        'S3': input_player_3,
+        'D1': input_player_4,
+        'D1B': input_player_5,
+        'D2': input_player_6,
+        'D2B': input_player_7,
+    }
+    eligible_result, warning = summer_league_eligibility(int(team_dropdown), my_proposed_team)
+    if eligible_result:
+        return 'primary', 'secondary', warning
+    else:
+        return 'secondary', 'primary', 'Your team is ineligible, please ensure you correctly spelled all team members full names correctly. Reason: '+warning
 
 
 @app.callback(
     Output('available_player_table', 'data'),
-    [Input('team-dropdown', 'value')]
+    Input('team_dropdown', 'value'),
 )
-def update_table_data(selected_team):
+def update_table_registered_player_data(selected_team):
     # Filter the registered_players_df based on the selected_team
-    filtered_df = registered_players_df[registered_players_df['Class'] == selected_team]
+    filtered_df = registered_players_df[registered_players_df['Class'] >= selected_team]
+    sorted_filtered_df = filtered_df.sort_values(by=['Class', 'Name'])
+    # Convert the filtered DataFrame to dict to update DataTable data
+    return sorted_filtered_df.to_dict('records')
+
+
+@app.callback(
+    Output('RegPrevWeekTable', 'data'),
+    [Input('team_dropdown', 'value')]
+)
+def update_table_previous_week_data(selected_team):
+    # Filter the registered_players_df based on the selected_team
+    filtered_df = reg_team_prev_weeks[reg_team_prev_weeks['Team'] == selected_team]
     # Convert the filtered DataFrame to dict to update DataTable data
     return filtered_df.to_dict('records')
 
