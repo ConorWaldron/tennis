@@ -67,17 +67,36 @@ drop_down_menus = html.Div(
     ]
 )
 
+carousel = dbc.Carousel(
+    items=[
+        {"key": "1", "src": "https://i.postimg.cc/mkcB9NqQ/donnybrook-ladies.jpg"},
+        {"key": "2", "src": "https://i.postimg.cc/7P9161M5/donnybrook-bbq.jpg"},
+        {"key": "3", "src": "https://i.postimg.cc/43fm7f7v/donnybrook-college-clash.jpg"},
+        {"key": "4", "src": "https://i.postimg.cc/t4FPPhGQ/donnybrook-mens.jpg"},
+    ],
+    controls=True,
+    indicators=False,
+    interval=10000,
+    ride="carousel",
+    className="custom-carousel"  # Add a custom class name to apply CSS styles
+)
+
+
 # you can provide images from local files or url to the internet
 instruct_tab = dbc.Card(
         html.Div(
             [
-            #dbc.CardImg(src="https://i.postimg.cc/wBxrRxy9/batch-reactor-image.png", top=True, style={'height':'65%', 'width':'65%'}),
-            dbc.CardImg(src='../assets/batch-reactor-image.png', top=True, style={'height':'65%', 'width':'65%'}),
+            html.Div(carousel, style={"height": "240px", "overflow": "hidden", "objectPosition": 'center'}),
+            #dbc.CardImg(src="https://i.postimg.cc/mkcB9NqQ/donnybrook-ladies.jpg", top=True, style={'height':'65%', 'width':'65%'}),
+            #dbc.CardImg(src="https://i.postimg.cc/7P9161M5/donnybrook-bbq.jpg", top=True, style={'height':'65%', 'width':'65%'}),
+            #dbc.CardImg(src="https://i.postimg.cc/43fm7f7v/donnybrook-college-clash.jpg", top=True, style={'height':'65%', 'width':'65%'}),
+            #dbc.CardImg(src="https://i.postimg.cc/t4FPPhGQ/donnybrook-mens.jpg", top=True, style={'height':'65%', 'width':'65%'}),
             dbc.CardBody(html.P("Interested in learning more about Donnybrook tennis, see https://www.donnybrookltc.ie/", className="card-text")),
             ],
             style={'textAlign': 'center'},
         )
 )
+
 
 player_selection = html.Div([
     html.Div(dbc.Button("Disable autoprompts", id="autoprompts-button", color="primary", className="me-1")),
@@ -106,12 +125,21 @@ check_eligibility_area = html.Div([
     html.Div(id='eligibility-output'),
 ])
 
+left_right_sections_for_team_selection_area = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(player_selection, width=5),
+                dbc.Col(check_eligibility_area, width=7)
+            ]
+        )
+    ]
+)
 
 team_selection_area = html.Div([
     html.H2('Select Your Team Here'),
     html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's coplete name"),
-    player_selection,
-    check_eligibility_area
+    left_right_sections_for_team_selection_area,
 ])
 
 
