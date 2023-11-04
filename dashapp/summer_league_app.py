@@ -167,24 +167,47 @@ team_selection_area = html.Div([
 
 available_players = html.Div([
     html.H2('Below is the list of players registered at or below this team', style=SUB_HEADING_STYLE),
-    dash_table.DataTable(
+    html.Div([
+        dash_table.DataTable(
             id='available_player_table',
             columns=[{'name': col, 'id': col} for col in registered_players_df.columns],
             data=registered_players_df.to_dict('records'),
             style_table={'maxHeight': '300px', 'maxWidth': '300px', 'overflowY': 'auto'},  # Limit height and enable scrolling
-            fixed_rows={'headers': True, 'data': 0}  # Fix header row
-        )
+            fixed_rows={'headers': True, 'data': 0},  # Fix header row
+            style_cell={'textAlign': 'left'},  # Left-align text in all cells
+            style_cell_conditional=[
+                        {'if': {'column_id': 'Name'}, 'minWidth': '100px', 'maxWidth': '150px'},
+                        {'if': {'column_id': 'Class'}, 'minWidth': '50px', 'maxWidth': '100px'},
+                    ]
+            )
+        ], style={'margin-left': '50px'}
+    )
 ], style=CONTENT_STYLE)
 
 RegPrevWeekTable = html.Div(
     [
     html.H2('Here is a table showing the registered team, and who played on this team in previous weeks', style=SUB_HEADING_STYLE),
-    dash_table.DataTable(
-        id='RegPrevWeekTable',
-        columns=[{"name": i, "id": i} for i in reg_team_prev_weeks.columns],
-        data=reg_team_prev_weeks.to_dict('records'),
-        )
-    ]
+    html.Div([
+        dash_table.DataTable(
+            id='RegPrevWeekTable',
+            columns=[{"name": i, "id": i} for i in reg_team_prev_weeks.columns],
+            data=reg_team_prev_weeks.to_dict('records'),
+            style_table={'maxWidth': '1300px', 'overflowY': 'auto'},  # Limit height and enable scrolling
+            style_cell={'textAlign': 'left'},  # Left-align text in all cells
+            style_cell_conditional=[
+                            {'if': {'column_id': 'Team'}, 'minWidth': '50px', 'maxWidth': '50px'},
+                            {'if': {'column_id': 'Position'}, 'minWidth': '50px', 'maxWidth': '50px'},
+                            {'if': {'column_id': 'Registered'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                            {'if': {'column_id': 'Week1'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                            {'if': {'column_id': 'Week2'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                            {'if': {'column_id': 'Week3'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                            {'if': {'column_id': 'Week4'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                            {'if': {'column_id': 'Week5'}, 'minWidth': '100px', 'maxWidth': '100px'},
+                        ]
+            )
+        ], style={'margin-left': '100px'}
+    )
+]
 )
 
 left_right_sections_for_top = dbc.Container(
