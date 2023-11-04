@@ -139,18 +139,20 @@ def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and
     class_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Lowest_Class'].iloc(0)[0]
     team_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Team'].iloc(0)[0]
 
+    # Checks that no doubles player is playing above someone of a better class
     weakest_class_d1_pair = max(class_D1, class_D1B)
     strongest_class_d2_pair = min(class_D2, class_D2B)
     if weakest_class_d1_pair > strongest_class_d2_pair:
         return False, f'Your 2nd doubles contains a class {strongest_class_d2_pair} player which is better than one of the players on your first doubles (class {weakest_class_d1_pair})'
 
-    if (team_D1 != 'Sub') | (team_D1B != 'Sub'):
-        # find the max (worst_ registered team in the D1 pair
+    # Checks that no doubles player is playing above someone from a better team
+    if (team_D1 != 'Sub') | (team_D1B != 'Sub'): # one of your D1 pair, is registered for a team instead of being a sub
+        # find the max (worst) registered team in the D1 pair
         if (team_D1 != 'Sub') & (team_D1B != 'Sub'):
             max_D1_reg_team = max(team_D1, team_D1B)
         elif (team_D1 != 'Sub') & (team_D1B == 'Sub'):
             max_D1_reg_team = team_D1
-        elif (team_D1 == 'Sub') & (team_D1B != 'Sub'):
+        else:
             max_D1_reg_team = team_D1B
 
         # find the min (best) registered team in the D2 pair
@@ -160,6 +162,8 @@ def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and
             min_D2_reg_team = team_D2
         elif (team_D2 == 'Sub') & (team_D2B != 'Sub'):
             min_D2_reg_team = team_D2B
+        else: # they are both subs
+            min_D2_reg_team = 1000  # assign to a fictionally high team
 
         if min_D2_reg_team < max_D1_reg_team:
             return False, f'Your 2nd doubles contains a player registered to team {min_D2_reg_team} which is better than one of the players on your first doubles (registered to team {max_D1_reg_team})'

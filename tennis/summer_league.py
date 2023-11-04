@@ -10,7 +10,7 @@ def summer_league_eligibility(team_number, proposed_team):
     """
     :param team_number, int
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
-    :return:
+    :return: valid bool, warning str
     """
     # Load in the registered teams and subs, then filter for relevant teams and relevant subs
     assert ((os.path.isfile('../assets/summer_league/teams.csv')) & (os.path.isfile(

@@ -16,7 +16,7 @@ from tennis.summer_league import summer_league_eligibility
 
 from dashapp.tennis_callbacks import update_suggested_player
 
-app = Dash(external_stylesheets=[dbc.themes.JOURNAL])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
 
 server = app.server      # exposes server of dash app as an objective that gunicorn can pick
 app.title = 'Tennis League Eligibility Checker'  # set the title to appear in the tab
@@ -36,6 +36,27 @@ reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Posit
 
 registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
 registered_players_list = registered_players_df['Name'].tolist()
+
+########################### Define all my Styles #####################################################################
+
+
+HEADING_STYLE = {
+    "background-color": "#000080",  # Navy
+    'text-align': 'center',
+    'color': '#ffffff',  # white
+}
+
+SUB_HEADING_STYLE = {
+    'text-align': 'center',
+    'color': "#000080",  # Navy
+}
+
+CONTENT_STYLE = {
+    "background-color": "#e0ffff",  # LIGHT CYAN
+    "border-radius": "10px",  # Add border radius (adjust the value as needed)
+    "border": "2px solid "#000080"",  # Border style and color (e.g., NAVY)
+
+}
 
 
 ########################### Define all my content #####################################################################
@@ -138,14 +159,14 @@ left_right_sections_for_team_selection_area = dbc.Container(
 )
 
 team_selection_area = html.Div([
-    html.H2('Select Your Team Here'),
+    html.H2('Select Your Team Here', style=SUB_HEADING_STYLE),
     html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's coplete name"),
     left_right_sections_for_team_selection_area,
-])
+], style=CONTENT_STYLE)
 
 
 available_players = html.Div([
-    html.H2('Below is the list of players registered at or below this team'),
+    html.H2('Below is the list of players registered at or below this team', style=SUB_HEADING_STYLE),
     dash_table.DataTable(
             id='available_player_table',
             columns=[{'name': col, 'id': col} for col in registered_players_df.columns],
@@ -153,11 +174,11 @@ available_players = html.Div([
             style_table={'maxHeight': '300px', 'maxWidth': '300px', 'overflowY': 'auto'},  # Limit height and enable scrolling
             fixed_rows={'headers': True, 'data': 0}  # Fix header row
         )
-])
+], style=CONTENT_STYLE)
 
 RegPrevWeekTable = html.Div(
     [
-    html.H2('Here is a table showing the registered team, and who played on this team in previous weeks'),
+    html.H2('Here is a table showing the registered team, and who played on this team in previous weeks', style=SUB_HEADING_STYLE),
     dash_table.DataTable(
         id='RegPrevWeekTable',
         columns=[{"name": i, "id": i} for i in reg_team_prev_weeks.columns],
@@ -190,10 +211,12 @@ left_right_sections_for_middle = dbc.Container(
 
 top_section = html.Div(
     [
-    html.H2('Web App to Check if League Team meets DLTC Eligibility Rules',  style={'text-align': 'center'}),
+    html.H2('Web App to Check if Summer League Team meets DLTC Eligibility Rules',  style=HEADING_STYLE),
     html.Br(),
     left_right_sections_for_top,
+    html.Br(),
     left_right_sections_for_middle,
+    html.Br(),
     RegPrevWeekTable
     ]
 )
