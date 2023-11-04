@@ -16,21 +16,22 @@ from tennis.summer_league import summer_league_eligibility
 
 from dashapp.tennis_callbacks import update_suggested_player
 
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(external_stylesheets=[dbc.themes.JOURNAL])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
+
 server = app.server      # exposes server of dash app as an objective that gunicorn can pick
 app.title = 'Tennis League Eligibility Checker'  # set the title to appear in the tab
 
 
 ########################### Define all my data objects #####################################################################
 
-reg_team = pd.read_csv('../assets/teams.csv')
+reg_team = pd.read_csv('../assets/summer_league/teams.csv')
 reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
 reg_team_relevant = reg_team_relevant.rename(columns={'Name': 'Registered'})
 
-reg_subs = pd.read_csv('../assets/subs.csv')
+reg_subs = pd.read_csv('../assets/summer_league/subs.csv')
 reg_subs.rename(columns={'Lowest_Class': 'Class'}, inplace=True)
 
-prev_weeks = pd.read_csv('../assets/previous_weeks.csv')
+prev_weeks = pd.read_csv('../assets/summer_league/previous_weeks.csv')
 reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Position'])
 
 registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
@@ -189,7 +190,8 @@ left_right_sections_for_middle = dbc.Container(
 
 top_section = html.Div(
     [
-    html.H2('Web App to Check if League Team meets DLTC Eligibility Rules'),
+    html.H2('Web App to Check if League Team meets DLTC Eligibility Rules',  style={'text-align': 'center'}),
+    html.Br(),
     left_right_sections_for_top,
     left_right_sections_for_middle,
     RegPrevWeekTable
