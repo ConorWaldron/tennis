@@ -1,6 +1,4 @@
-import dash
-from dash import Dash, dcc, html, dash_table, dependencies, Input, Output, State, MATCH
-from dash.dependencies import ALL
+from dash import html
 
 
 def update_suggested_player(value, registered_players_list, n_clicks=0):

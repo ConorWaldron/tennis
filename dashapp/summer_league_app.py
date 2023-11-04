@@ -1,20 +1,12 @@
 """
 This APP simulates first order batch reactions
 """
-import dash
-from dash import Dash, dcc, html, dash_table, dependencies, Input, Output, State, MATCH
-from dash.dependencies import ALL
+from dash import Dash, dcc, html, dash_table, Input, Output, State
 import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
-from scipy.integrate import odeint
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
-import os
-
 from tennis.summer_league import summer_league_eligibility
-
 from dashapp.tennis_callbacks import update_suggested_player
+import os
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
 
@@ -428,5 +420,5 @@ def update_table_previous_week_data(selected_team):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh
-    #app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh, runs on a standard port
+    #app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))  # used when you are actually running app with docker as you specify the port here, this must match the port specified in the Dockerfile
