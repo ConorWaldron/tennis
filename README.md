@@ -11,11 +11,15 @@ You can run the docker image locally (if you have Docker installed and you have 
 'docker run -d -p 8888:5000 conorwaldron512/summer_league_webapp:1.0'
 If you then go to localhost:8888 you can see the web app working locally, the same as if you ran app.py from pycharm on your local machine
 You can use 'docker ps' to see a list of running containers and you can use 'docker stop <container_id>' to turn off a container
-
 If you encounter any problems you can try to de-bug them by looking at the docker container logs with the command 'docker logs <container_id>'
-
 Note that if you are using any custom modules with a Docker webapp, it is easiest to just put them all in the same directory as the web app and then you can import them without needing a setup.py file or pip installing the module
 
+If you want to publish your docker file to dockerhub you can use 'docker push conorwaldron512/summer_league_webapp:1.0' and then you can see the file on the docker hub wesbite at https://hub.docker.com/
+At this point another developer could pull your image, and then run it in a container on their own local machine.
+
+# Deploy docker image to container on cloud
+If you want other users to be able to view your webapp without having to run the docker image themselves, then you need to host your image in the cloud.
+If you want to do this with AWS elastic bean stalk you need to make a dockerun.aws.json file
 
 # Data requirements
 This web app expects the following files in the assets folder
