@@ -14,12 +14,7 @@ You can use 'docker ps' to see a list of running containers and you can use 'doc
 
 If you encounter any problems you can try to de-bug them by looking at the docker container logs with the command 'docker logs <container_id>'
 
-Note that if you are using any custom modules in Docker, the setup.py for those files needs to be inside that folder... like below
-
-- Dockerfile
-- tennis/
-  - setup.py
-  - other_module_files.py
+Note that if you are using any custom modules with a Docker webapp, it is easiest to just put them all in the same directory as the web app and then you can import them without needing a setup.py file or pip installing the module
 
 
 # Data requirements

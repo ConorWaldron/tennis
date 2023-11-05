@@ -1,9 +1,12 @@
-'run with pytest test.py -vv'
+'''
+run with    pytest test.py -vv
+if pytest is not installed properly, you can try to run with python -m pytest test.py -vv
+'''
 
 import pytest
 import pandas as pd
 
-from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order,\
+from dashapp.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order,\
     doubles_team_and_class_checker, doubles_right_order, team_tied
 
 
@@ -11,39 +14,39 @@ from tennis.eligibility_rules import has_7_unique_reg_players, team_played_befor
 
 @pytest.fixture(scope='session')
 def team_7_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_7_df = team_df[team_df['Team'] == 7]
     return team_7_df
 
 
 @pytest.fixture(scope='session')
 def team_4_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
     return team_4_df
 
 
 @pytest.fixture(scope='session')
 def team_3_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_3_df = team_df[team_df['Team'] == 3]
     return team_3_df
 
 
 @pytest.fixture(scope='session')
 def team_2_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
     return team_2_df
 
 
 @pytest.fixture(scope='session')
 def team_7_subs_and_lower_class_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_7_df = team_df[team_df['Team'] == 7]
     lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
-    subs_df = pd.read_csv('subs_test.csv')
+    subs_df = pd.read_csv('unittest_data/subs_test.csv')
     relevant_subs = subs_df[subs_df['Lowest_Class'] >= 7].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_7_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
@@ -53,11 +56,11 @@ def team_7_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def team_4_subs_and_lower_class_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
     lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
-    subs_df = pd.read_csv('subs_test.csv')
+    subs_df = pd.read_csv('unittest_data/subs_test.csv')
     relevant_subs = subs_df[subs_df['Lowest_Class'] >= 4].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_4_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
@@ -67,11 +70,11 @@ def team_4_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def team_3_subs_and_lower_class_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_3_df = team_df[team_df['Team'] == 3]
     lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
-    subs_df = pd.read_csv('subs_test.csv')
+    subs_df = pd.read_csv('unittest_data/subs_test.csv')
     relevant_subs = subs_df[subs_df['Lowest_Class'] >= 3].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_3_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
@@ -81,11 +84,11 @@ def team_3_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def team_2_subs_and_lower_class_df():
-    team_df = pd.read_csv('teams_test.csv')
+    team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
     lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
 
-    subs_df = pd.read_csv('subs_test.csv')
+    subs_df = pd.read_csv('unittest_data/subs_test.csv')
     relevant_subs = subs_df[subs_df['Lowest_Class'] >= 2].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_2_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
@@ -95,19 +98,19 @@ def team_2_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def prev_week1():
-    prev_week1 = pd.read_csv('after_week1.csv')
+    prev_week1 = pd.read_csv('unittest_data/after_week1.csv')
     return prev_week1
 
 
 @pytest.fixture(scope='session')
 def prev_week2():
-    prev_week2 = pd.read_csv('after_week2.csv')
+    prev_week2 = pd.read_csv('unittest_data/after_week2.csv')
     return prev_week2
 
 
 @pytest.fixture(scope='session')
 def prev_week3():
-    prev_week3 = pd.read_csv('after_week3.csv')
+    prev_week3 = pd.read_csv('unittest_data/after_week3.csv')
     return prev_week3
 
 

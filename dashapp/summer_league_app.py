@@ -4,8 +4,8 @@ This APP simulates first order batch reactions
 from dash import Dash, dcc, html, dash_table, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
-from tennis.summer_league import summer_league_eligibility
-from dashapp.tennis_callbacks import update_suggested_player
+from summer_league import summer_league_eligibility
+from tennis_callbacks import update_suggested_player
 import os
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
@@ -152,7 +152,7 @@ left_right_sections_for_team_selection_area = dbc.Container(
 
 team_selection_area = html.Div([
     html.H2('Select Your Team Here', style=SUB_HEADING_STYLE),
-    html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's coplete name"),
+    html.H6("The text boxes will display all the registered players in the system which match the spelling of what you have typed so far. You still need to write the player's complete name, warning it is case sensitive"),
     left_right_sections_for_team_selection_area,
 ], style=CONTENT_STYLE)
 
@@ -420,5 +420,8 @@ def update_table_previous_week_data(selected_team):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh, runs on a standard port
-    #app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))  # used when you are actually running app with docker as you specify the port here, this must match the port specified in the Dockerfile
+    #app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh, runs on a standard port
+
+    # used when you are actually running app with docker as you specify the port here, this must match the port specified in the Dockerfile
+    # Note if you are trying to view it from your loacl machine it returns two urls, but only the second one works http://192.168.0.38:5000/
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

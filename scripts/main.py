@@ -1,5 +1,5 @@
 
-from tennis.summer_league import summer_league_eligibility
+from dashapp.summer_league import summer_league_eligibility
 
 
 if __name__ == '__main__':

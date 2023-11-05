@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-from tennis.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, \
+from eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, \
     doubles_team_and_class_checker, doubles_right_order, team_tied
 
 
