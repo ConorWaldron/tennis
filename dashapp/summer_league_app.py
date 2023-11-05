@@ -95,7 +95,7 @@ sub_file = html.Div([
 previous_week_file = html.Div([
             html.H6('previous_weeks.xlsx', style={'textAlign': 'center'}),
             html.Button(id='DownLoadPreviousWeeksTemplateButton', n_clicks=0, children='Download template',
-                        style={'width': '150px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px', 'align'}),
+                        style={'width': '150px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px'}),
             dcc.Upload(id='uploadprevious', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
         ]),
 
