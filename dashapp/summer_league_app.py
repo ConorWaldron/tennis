@@ -8,6 +8,8 @@ import pandas as pd
 from summer_league import summer_league_eligibility
 from tennis_callbacks import update_suggested_player
 import os
+import io
+import base64
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
 
@@ -76,6 +78,39 @@ team_dropdown = html.Div([
 ])
 
 
+team_file = html.Div([
+            html.H6('teams.xlsx', style={'textAlign': 'center'}),
+            html.Button(id='DownLoadTeamsTemplateButton', n_clicks=0, children='Download template',
+                        style={'width': '150px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px', 'display': 'inline-block'}),
+            dcc.Upload(id='uploadteam', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+        ]),
+
+sub_file = html.Div([
+            html.H6('subs.xlsx', style={'textAlign': 'center'}),
+            html.Button(id='DownLoadSubsTemplateButton', n_clicks=0, children='Download template',
+                        style={'width': '150px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
+            dcc.Upload(id='uploadsub', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+        ]),
+
+previous_week_file = html.Div([
+            html.H6('previous_weeks.xlsx', style={'textAlign': 'center'}),
+            html.Button(id='DownLoadPreviousWeeksTemplateButton', n_clicks=0, children='Download template',
+                        style={'width': '150px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px', 'align'}),
+            dcc.Upload(id='uploadprevious', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+        ]),
+
+columns_for_upload = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(team_file, width=4),
+                dbc.Col(sub_file, width=4),
+                dbc.Col(previous_week_file, width=4)
+            ]
+        )
+    ]
+)
+
 drop_down_menus = html.Div(
     [
         #gender_dropdown,
@@ -83,26 +118,7 @@ drop_down_menus = html.Div(
         html.Br(),
         html.H4('Upload your own team information'),
         html.P('This website comes with team information that is pre-loaded by the website maintainer but if you want to upload team information for another club you can do this here by downloading the three template files, modifying them with your team information and uploading them to the website in the sections below.'),
-        html.Div([
-            html.Button(id='DownLoadTeamsTemplateButton', n_clicks=0, children='Download "teams_template.xlsx" template',
-                        style={'width': '250px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
-            html.Button(id='UpLoadTeamsTemplateButton', n_clicks=0, children='Upload "teams_template.xlsx"',
-                        style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
-        ]),
-        html.Br(),
-        html.Div([
-                    html.Button(id='DownLoadSubsTemplateButton', n_clicks=0, children='Download "subs_template.xlsx" template',
-                                style={'width': '250px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
-                    html.Button(id='UpLoadSubsTemplateButton', n_clicks=0, children='Upload "subs_template.xlsx"',
-                                style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
-                ]),
-        html.Br(),
-        html.Div([
-                    html.Button(id='DownLoadPreviousWeeksTemplateButton', n_clicks=0, children='Download "previous_weeks_template.xlsx" template',
-                                style={'width': '250px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px'}),
-                    html.Button(id='UpLoadPreviousWeeksTemplateButton', n_clicks=0, children='Upload "previous_weeks_template.xlsx"',
-                                style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
-                ]),
+        columns_for_upload,
         dcc.Download(id="downloadteam"),  # non visible componet for download return
         dcc.Download(id="downloadsub"),  # non visible componet for download return
         dcc.Download(id="downloadprevious"),  # non visible componet for download return
@@ -268,6 +284,9 @@ top_section = html.Div(
 content = html.Div(
     [
     top_section,
+    html.Div(id='output-team-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
+    html.Div(id='output-sub-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
+    html.Div(id='output-previous-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
     ]
 )
 app.layout = content
@@ -299,7 +318,7 @@ def update_team_output(selected_team):
     Output(component_id="downloadteam", component_property="data"),
     Input(component_id="DownLoadTeamsTemplateButton", component_property="n_clicks"),
 )
-def func(nclickslocal):
+def download_team_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
@@ -311,7 +330,7 @@ def func(nclickslocal):
     Output(component_id="downloadsub", component_property="data"),
     Input(component_id="DownLoadSubsTemplateButton", component_property="n_clicks"),
 )
-def func(nclickslocal):
+def download_sub_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
@@ -323,12 +342,56 @@ def func(nclickslocal):
     Output(component_id="downloadprevious", component_property="data"),
     Input(component_id="DownLoadPreviousWeeksTemplateButton", component_property="n_clicks"),
 )
-def func(nclickslocal):
+def download_previous_week_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
         previous_weeks_template_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
         return dcc.send_data_frame(previous_weeks_template_df.to_excel, "PreviousWeeksTemplate.xlsx")
+
+
+# going to reuse this callback function 3 times
+def upload_file(contents):
+    if contents is not None:
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
+
+        # You can save the uploaded file to a specific location or process it as needed
+        # For example, you can read it into a pandas DataFrame
+        df = pd.read_excel(io.BytesIO(decoded))
+
+        # You can perform further processing on the DataFrame or display it in your app
+        return html.Div([
+            html.H5('Uploaded Excel Data'),
+            dash_table.DataTable(data=df.to_dict('records'), columns=[{'name': col, 'id': col} for col in df.columns])
+        ])
+
+
+@app.callback(
+    Output('output-team-upload', 'children'),
+    Input('uploadteam', 'contents'),
+    prevent_initial_call=True
+)
+def upload_team_file(contents):
+    return upload_file(contents)
+
+
+@app.callback(
+    Output('output-sub-upload', 'children'),
+    Input('uploadsub', 'contents'),
+    prevent_initial_call=True
+)
+def upload_sub_file(contents):
+    return upload_file(contents)
+
+
+@app.callback(
+    Output('output-previous-upload', 'children'),
+    Input('uploadprevious', 'contents'),
+    prevent_initial_call=True
+)
+def upload_team_file(contents):
+    return upload_file(contents)
 
 
 @app.callback(
