@@ -3,6 +3,7 @@ This APP simulates first order batch reactions
 """
 from dash import Dash, dcc, html, dash_table, Input, Output, State
 import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
 import pandas as pd
 from summer_league import summer_league_eligibility
 from tennis_callbacks import update_suggested_player
@@ -74,10 +75,37 @@ team_dropdown = html.Div([
     html.Div(id='selected-team-output')
 ])
 
+
 drop_down_menus = html.Div(
     [
-        gender_dropdown,
-        team_dropdown
+        #gender_dropdown,
+        team_dropdown,
+        html.Br(),
+        html.H4('Upload your own team information'),
+        html.P('This website comes with team information that is pre-loaded by the website maintainer but if you want to upload team information for another club you can do this here by downloading the three template files, modifying them with your team information and uploading them to the website in the sections below.'),
+        html.Div([
+            html.Button(id='DownLoadTeamsTemplateButton', n_clicks=0, children='Download "teams_template.xlsx" template',
+                        style={'width': '250px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
+            html.Button(id='UpLoadTeamsTemplateButton', n_clicks=0, children='Upload "teams_template.xlsx"',
+                        style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
+        ]),
+        html.Br(),
+        html.Div([
+                    html.Button(id='DownLoadSubsTemplateButton', n_clicks=0, children='Download "subs_template.xlsx" template',
+                                style={'width': '250px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
+                    html.Button(id='UpLoadSubsTemplateButton', n_clicks=0, children='Upload "subs_template.xlsx"',
+                                style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
+                ]),
+        html.Br(),
+        html.Div([
+                    html.Button(id='DownLoadPreviousWeeksTemplateButton', n_clicks=0, children='Download "previous_weeks_template.xlsx" template',
+                                style={'width': '250px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px'}),
+                    html.Button(id='UpLoadPreviousWeeksTemplateButton', n_clicks=0, children='Upload "previous_weeks_template.xlsx"',
+                                style={'width': '250px', 'height': '40px', 'font-size': '12px'}),
+                ]),
+        dcc.Download(id="downloadteam"),  # non visible componet for download return
+        dcc.Download(id="downloadsub"),  # non visible componet for download return
+        dcc.Download(id="downloadprevious"),  # non visible componet for download return
     ]
 )
 
@@ -246,6 +274,7 @@ app.layout = content
 
 ########################### Define all my callbacks #####################################################################
 
+"""
 @app.callback(
     Output('selected-gender-output', 'children'),
     [Input('gender-dropdown', 'value')]
@@ -255,6 +284,7 @@ def update_gender_output(selected_gender):
         return f"You have selected gender: {selected_gender}"
     else:
         return "Please select gender"
+"""
 
 
 @app.callback(
@@ -263,6 +293,42 @@ def update_gender_output(selected_gender):
 )
 def update_team_output(selected_team):
     return f"You have chosen team {selected_team}"
+
+
+@app.callback(
+    Output(component_id="downloadteam", component_property="data"),
+    Input(component_id="DownLoadTeamsTemplateButton", component_property="n_clicks"),
+)
+def func(nclickslocal):
+    if nclickslocal == 0:
+        raise PreventUpdate
+    else:
+        teams_template_df = pd.read_csv('../assets/summer_league/teams_template.csv')
+        return dcc.send_data_frame(teams_template_df.to_excel, "TeamsTemplate.xlsx")
+
+
+@app.callback(
+    Output(component_id="downloadsub", component_property="data"),
+    Input(component_id="DownLoadSubsTemplateButton", component_property="n_clicks"),
+)
+def func(nclickslocal):
+    if nclickslocal == 0:
+        raise PreventUpdate
+    else:
+        subs_template_df = pd.read_csv('../assets/summer_league/subs_template.csv')
+        return dcc.send_data_frame(subs_template_df.to_excel, "SubsTemplate.xlsx")
+
+
+@app.callback(
+    Output(component_id="downloadprevious", component_property="data"),
+    Input(component_id="DownLoadPreviousWeeksTemplateButton", component_property="n_clicks"),
+)
+def func(nclickslocal):
+    if nclickslocal == 0:
+        raise PreventUpdate
+    else:
+        previous_weeks_template_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
+        return dcc.send_data_frame(previous_weeks_template_df.to_excel, "PreviousWeeksTemplate.xlsx")
 
 
 @app.callback(
@@ -420,8 +486,8 @@ def update_table_previous_week_data(selected_team):
 
 
 if __name__ == '__main__':
-    #app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh, runs on a standard port
+    app.run_server(debug=True)  # Set debug to true makes webapp automatically update, when user clicks refresh, runs on a standard port
 
     # used when you are actually running app with docker as you specify the port here, this must match the port specified in the Dockerfile
     # Note if you are trying to view it from your loacl machine it returns two urls, but only the second one works http://192.168.0.38:5000/
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
