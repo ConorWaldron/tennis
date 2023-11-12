@@ -3,7 +3,7 @@ def has_7_unique_reg_players(proposed_team, registered_team, team_subs_and_lower
     Checks that there are 7 unique players on the team that are in the subs and lower team list
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
@@ -25,7 +25,7 @@ def team_played_before(proposed_team, registered_team, team_subs_and_lower_teams
     Checks that this exact group of 7 players hasnt played before, and if so that they play in the exact same prior order
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
@@ -64,7 +64,7 @@ def singles_right_order(proposed_team, registered_team, team_subs_and_lower_team
 
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
@@ -93,12 +93,12 @@ def singles_right_order(proposed_team, registered_team, team_subs_and_lower_team
             return False, f'You are playing {player} ahead of {proposed_team["S3"]} but that violates a previous weeks order'
 
         # check if the lower singles players are of a higher (better) class
-        player_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==player]['Lowest_Class'].iloc(0)[0]
+        player_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==player]['Class'].iloc(0)[0]
         if single_pos == 'S1':
-            s2_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['S2']]['Lowest_Class'].iloc(0)[0]
+            s2_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['S2']]['Class'].iloc(0)[0]
             if player_class > s2_class:
                 return False, f'You are playing {player} (class {player_class}) ahead of {proposed_team["S2"]} (class {s2_class})'
-        s3_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['S3']]['Lowest_Class'].iloc(0)[0]
+        s3_class = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['S3']]['Class'].iloc(0)[0]
         if player_class > s3_class:
             return False, f'You are playing {player} (class {player_class}) ahead of {proposed_team["S3"]} (class {s3_class})'
 
@@ -126,17 +126,17 @@ def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and
 
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
-    class_D1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['D1']]['Lowest_Class'].iloc(0)[0]
+    class_D1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name']==proposed_team['D1']]['Class'].iloc(0)[0]
     team_D1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1']]['Team'].iloc(0)[0]
-    class_D1B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1B']]['Lowest_Class'].iloc(0)[0]
+    class_D1B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1B']]['Class'].iloc(0)[0]
     team_D1B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D1B']]['Team'].iloc(0)[0]
-    class_D2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2']]['Lowest_Class'].iloc(0)[0]
+    class_D2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2']]['Class'].iloc(0)[0]
     team_D2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2']]['Team'].iloc(0)[0]
-    class_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Lowest_Class'].iloc(0)[0]
+    class_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Class'].iloc(0)[0]
     team_D2B = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team['D2B']]['Team'].iloc(0)[0]
 
     # Checks that no doubles player is playing above someone of a better class
@@ -177,7 +177,7 @@ def doubles_right_order(proposed_team, registered_team, team_subs_and_lower_team
 
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
@@ -237,7 +237,7 @@ def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, previou
 
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
-    :param team_subs_and_lower_teams: pd df with columns Name, Lowest_Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
