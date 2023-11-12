@@ -1,7 +1,7 @@
 """
 This APP simulates first order batch reactions
 """
-from dash import Dash, dcc, html, dash_table, Input, Output, State
+from dash import Dash, dcc, html, dash_table, Input, Output, State, callback_context
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import pandas as pd
@@ -67,6 +67,7 @@ gender_dropdown = html.Div([
     html.Div(id='selected-gender-output')
 ])
 
+# ToDo this is fixed to the number of teams in the template file, update this so the number changes with the new files uploaded
 team_dropdown = html.Div([
     html.H4("Team Selection"),
     dcc.Dropdown(
@@ -268,7 +269,7 @@ left_right_sections_for_middle = dbc.Container(
     ]
 )
 
-top_section = html.Div(
+full_section = html.Div(
     [
     html.H2('Web App to Check if Summer League Team meets DLTC Eligibility Rules',  style=HEADING_STYLE),
     html.Br(),
@@ -283,7 +284,10 @@ top_section = html.Div(
 
 content = html.Div(
     [
-    top_section,
+    dcc.Store(id='team-store', storage_type='session'),  # Store the team dataframe in the session
+    dcc.Store(id='sub-store', storage_type='session'),  # Store the sub dataframe in the session
+    dcc.Store(id='previous-week-store', storage_type='session'),  # Store the previous week dataframe in the session
+    full_section,
     html.Div(id='output-team-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
     html.Div(id='output-sub-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
     html.Div(id='output-previous-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
@@ -291,7 +295,51 @@ content = html.Div(
 )
 app.layout = content
 
-########################### Define all my callbacks #####################################################################
+########################### Define all my callbacks ####################################################################
+
+# We use a session variable to update the teams, subs and previous week df if a user uploads one
+
+# going to reuse this callback function 3 times
+def update_df(contents):
+    ctx = callback_context
+    if not ctx.triggered_id:
+        raise PreventUpdate
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+
+    # Assuming the uploaded file is a CSV file
+    df = pd.read_excel(io.BytesIO(decoded))
+
+    return df.to_dict('records')  # Convert the dataframe to a dictionary for storage
+
+
+@app.callback(
+    Output('team-store', 'data'),
+    Input('uploadteam', 'contents'),
+    prevent_initial_call=True
+)
+def update_team_file(contents):
+    return update_df(contents)
+
+@app.callback(
+    Output('sub-store', 'data'),
+    Input('uploadteam', 'contents'),
+    prevent_initial_call=True
+)
+def update_sub_file(contents):
+    return update_df(contents)
+
+@app.callback(
+    Output('previous-week-store', 'data'),
+    Input('uploadteam', 'contents'),
+    prevent_initial_call=True
+)
+def update_prev_week_file(contents):
+    return update_df(contents)
+
+
+
 
 """
 @app.callback(
@@ -431,63 +479,105 @@ def update_output(value):
     Output('autoprompt-output-player-1', 'children'),
     Input('input_player_1', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_1(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_1(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-2', 'children'),
     Input('input_player_2', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_2(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_2(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-3', 'children'),
     Input('input_player_3', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_3(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_3(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-4', 'children'),
     Input('input_player_4', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_4(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_4(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-5', 'children'),
     Input('input_player_5', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_5(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_5(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-6', 'children'),
     Input('input_player_6', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_6(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_6(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
     Output('autoprompt-output-player-7', 'children'),
     Input('input_player_7', 'value'),
     Input("autoprompts-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
 )
-def update_suggested_player_7(value, n_clicks):
-    return update_suggested_player(value, registered_players_list, n_clicks)
+def update_suggested_player_7(value, n_clicks, team_data, sub_data):
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
+    available_players_list = available_df['Name'].tolist()
+    return update_suggested_player(value, available_players_list, n_clicks)
 
 
 @app.callback(
@@ -495,6 +585,9 @@ def update_suggested_player_7(value, n_clicks):
     Output("button-false", "color"),
     Output("eligibility-output", "children"),
     Input("eligibility-button", "n_clicks"),
+    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
+    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
+    Input('previous-week-store', 'data'),  # Input the previous week dataframe from the dcc.Store
     State("team_dropdown", "value"),
     State("input_player_1", "value"),
     State("input_player_2", "value"),
@@ -504,10 +597,15 @@ def update_suggested_player_7(value, n_clicks):
     State("input_player_6", "value"),
     State("input_player_7", "value"),
 )
-def update_eligibility_result_button_state(n_clicks, team_dropdown, input_player_1, input_player_2, input_player_3, input_player_4,
+def update_eligibility_result_button_state(n_clicks, team_data, sub_data, previous_week_data, team_dropdown,
+                                           input_player_1, input_player_2, input_player_3, input_player_4,
                                            input_player_5, input_player_6, input_player_7):
     if n_clicks is None or n_clicks == 0:
         return 'secondary', 'secondary', 'Have not run eligibility checker yet'
+
+    team_df = pd.DataFrame(team_data) if team_data else reg_team
+    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    prev_week_df = pd.DataFrame(previous_week_data) if previous_week_data else prev_weeks
 
     my_proposed_team = {
         'S1': input_player_1,
@@ -518,7 +616,8 @@ def update_eligibility_result_button_state(n_clicks, team_dropdown, input_player
         'D2': input_player_6,
         'D2B': input_player_7,
     }
-    eligible_result, warning = summer_league_eligibility(int(team_dropdown), my_proposed_team)
+    eligible_result, warning = summer_league_eligibility(int(team_dropdown), my_proposed_team,
+                                                         team_df, sub_df, prev_week_df)
     if eligible_result:
         return 'primary', 'secondary', warning
     else:
