@@ -83,6 +83,7 @@ team_file = html.Div([
             html.Button(id='DownLoadTeamsTemplateButton', n_clicks=0, children='Download template',
                         style={'width': '150px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px', 'display': 'inline-block'}),
             dcc.Upload(id='uploadteam', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+            html.Div(id='team_upload_error')
         ]),
 
 sub_file = html.Div([
@@ -90,6 +91,7 @@ sub_file = html.Div([
             html.Button(id='DownLoadSubsTemplateButton', n_clicks=0, children='Download template',
                         style={'width': '150px', 'height': '40px', 'font-size': '12px', 'margin-right': '10px'}),
             dcc.Upload(id='uploadsub', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+            html.Div(id='sub_upload_error')
         ]),
 
 previous_week_file = html.Div([
@@ -97,6 +99,7 @@ previous_week_file = html.Div([
             html.Button(id='DownLoadPreviousWeeksTemplateButton', n_clicks=0, children='Download template',
                         style={'width': '150px', 'height': '40px', 'font-size': '10px', 'margin-right': '10px'}),
             dcc.Upload(id='uploadprevious', children=html.Button('Upload file', style={'width': '150px', 'height': '40px', 'font-size': '12px', 'display': 'inline-block'}), multiple=False),
+            html.Div(id='prev_week_upload_error')
         ]),
 
 columns_for_upload = dbc.Container(
@@ -298,8 +301,14 @@ app.layout = content
 
 # We use a session variable to update the teams, subs and previous week df if a user uploads one
 
-# going to reuse this callback function 3 times
-def update_df(contents):
+
+@app.callback(
+    Output('team-store', 'data'),
+    Output('team_upload_error', 'children'),
+    Input('uploadteam', 'contents'),
+    prevent_initial_call=True
+)
+def update_team_file(contents):
     ctx = callback_context
     if not ctx.triggered_id:
         raise PreventUpdate
@@ -310,32 +319,68 @@ def update_df(contents):
     # Assuming the uploaded file is a CSV file
     df = pd.read_excel(io.BytesIO(decoded))
 
-    return df.to_dict('records')  # Convert the dataframe to a dictionary for storage
+    # Check for expected column names
+    expected_columns = ['Name', 'Team', 'Class', 'Position']
+    if not set(expected_columns).issubset(df.columns):
+        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+        old_df = pd.read_csv('../assets/summer_league/teams_template.csv')
+        return old_df.to_dict('records'), warning_message
 
+    return df.to_dict('records'), ''
 
-@app.callback(
-    Output('team-store', 'data'),
-    Input('uploadteam', 'contents'),
-    prevent_initial_call=True
-)
-def update_team_file(contents):
-    return update_df(contents)
 
 @app.callback(
     Output('sub-store', 'data'),
+    Output('sub_upload_error', 'children'),
     Input('uploadsub', 'contents'),
     prevent_initial_call=True
 )
 def update_sub_file(contents):
-    return update_df(contents)
+    ctx = callback_context
+    if not ctx.triggered_id:
+        raise PreventUpdate
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+
+    # Assuming the uploaded file is a CSV file
+    df = pd.read_excel(io.BytesIO(decoded))
+
+    # Check for expected column names
+    expected_columns = ['Name', 'Class']
+    if not set(expected_columns).issubset(df.columns):
+        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+        old_df = pd.read_csv('../assets/summer_league/subs_template.csv')
+        return old_df.to_dict('records'), warning_message
+
+    return df.to_dict('records'), ''
+
 
 @app.callback(
     Output('previous-week-store', 'data'),
+    Output('prev_week_upload_error', 'children'),
     Input('uploadprevious', 'contents'),
     prevent_initial_call=True
 )
 def update_prev_week_file(contents):
-    return update_df(contents)
+    ctx = callback_context
+    if not ctx.triggered_id:
+        raise PreventUpdate
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+
+    # Assuming the uploaded file is a CSV file
+    df = pd.read_excel(io.BytesIO(decoded))
+
+    # Check for expected column names
+    expected_columns = ['Team', 'Position', 'Week1', 'Week2', 'Week3', 'Week4', 'Week5']
+    if not set(expected_columns).issubset(df.columns):
+        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+        old_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
+        return old_df.to_dict('records'), warning_message
+
+    return df.to_dict('records'), ''
 
 
 
