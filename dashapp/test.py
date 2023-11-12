@@ -44,12 +44,12 @@ def team_2_df():
 def team_7_subs_and_lower_class_df():
     team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_7_df = team_df[team_df['Team'] == 7]
-    lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']]
 
     subs_df = pd.read_csv('unittest_data/subs_test.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 7].copy()
+    relevant_subs = subs_df[subs_df['Class'] >= 7].copy()
     relevant_subs['Team'] = 'Sub'
-    team_of_interest = team_7_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_of_interest = team_7_df[['Name', 'Class', 'Team']]
     team_7_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     return team_7_subs_and_lower_class_df
 
@@ -58,12 +58,12 @@ def team_7_subs_and_lower_class_df():
 def team_4_subs_and_lower_class_df():
     team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
-    lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']]
 
     subs_df = pd.read_csv('unittest_data/subs_test.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 4].copy()
+    relevant_subs = subs_df[subs_df['Class'] >= 4].copy()
     relevant_subs['Team'] = 'Sub'
-    team_of_interest = team_4_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_of_interest = team_4_df[['Name', 'Class', 'Team']]
     team_4_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     return team_4_subs_and_lower_class_df
 
@@ -72,12 +72,12 @@ def team_4_subs_and_lower_class_df():
 def team_3_subs_and_lower_class_df():
     team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_3_df = team_df[team_df['Team'] == 3]
-    lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']]
 
     subs_df = pd.read_csv('unittest_data/subs_test.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 3].copy()
+    relevant_subs = subs_df[subs_df['Class'] >= 3].copy()
     relevant_subs['Team'] = 'Sub'
-    team_of_interest = team_3_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_of_interest = team_3_df[['Name', 'Class', 'Team']]
     team_3_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     return team_3_subs_and_lower_class_df
 
@@ -86,12 +86,12 @@ def team_3_subs_and_lower_class_df():
 def team_2_subs_and_lower_class_df():
     team_df = pd.read_csv('unittest_data/teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
-    lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']]
 
     subs_df = pd.read_csv('unittest_data/subs_test.csv')
-    relevant_subs = subs_df[subs_df['Lowest_Class'] >= 2].copy()
+    relevant_subs = subs_df[subs_df['Class'] >= 2].copy()
     relevant_subs['Team'] = 'Sub'
-    team_of_interest = team_2_df[['Name', 'Class', 'Team']].rename(columns={'Class': 'Lowest_Class'})
+    team_of_interest = team_2_df[['Name', 'Class', 'Team']]
     team_2_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     return team_2_subs_and_lower_class_df
 
