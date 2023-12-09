@@ -291,7 +291,6 @@ def has_6_unique_reg_players(proposed_team, registered_team, team_subs_and_lower
     return True, None
 
 
-# TODO
 def winter_lg_doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
     Checks that no doubles player is playing above someone of a better class
@@ -303,10 +302,49 @@ def winter_lg_doubles_team_and_class_checker(proposed_team, registered_team, tea
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
+    doubles_pairs = ['D1', 'D1B', 'D2', 'D2B', 'D3', 'D3B']  # Add the third doubles pairings
+
+    # Iterate over each doubles pair except the bottom 1, and check if that pair is valid compared to the one below
+    for i in range(0, len(doubles_pairs)-2, 2):
+        player1 = proposed_team[doubles_pairs[i]]
+        player2 = proposed_team[doubles_pairs[i + 1]]
+
+        class_player1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == player1]['Class'].iloc(0)[0]
+        team_player1 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == player1]['Team'].iloc(0)[0]
+
+        class_player2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == player2]['Class'].iloc(0)[0]
+        team_player2 = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == player2]['Team'].iloc(0)[0]
+
+        # Checks that no doubles player is playing above someone of a better class, by for each pair just comparing to the pair immediately below
+        weakest_class_pair = max(class_player1, class_player2)
+        strongest_class_pair_immediately_below = min(
+            team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team[doubles_pairs[i + 2]]]['Class'].iloc(0)[0],
+            team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team[doubles_pairs[i + 3]]]['Class'].iloc(0)[0]
+        )
+
+        if weakest_class_pair > strongest_class_pair_immediately_below:
+            return False, f'Your {i // 2 + 1} doubles contains a class {weakest_class_pair} player which is better than one of the players on your {i // 2 + 2} doubles (class {strongest_class_pair_immediately_below})'
+
+        # Checks that no doubles player is playing above someone from a better team
+        if (team_player1 != 'Sub') or (team_player2 != 'Sub'):
+            max_reg_team = max(team_player1, team_player2)
+            # lower players could be subs
+            team_of_player1_in_pairing_immediately_below = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team[doubles_pairs[i + 2]]]['Team'].iloc(0)[0]
+            team_of_player2_in_pairing_immediately_below = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team[doubles_pairs[i + 3]]]['Team'].iloc(0)[0]
+            if team_of_player1_in_pairing_immediately_below == 'Sub':
+                team_of_player1_in_pairing_immediately_below = 100 # big number to show they are on a low team
+            if team_of_player2_in_pairing_immediately_below == 'Sub':
+                team_of_player2_in_pairing_immediately_below = 100  # big number to show they are on a low team
+
+            min_reg_team_immediately_below = min(team_of_player1_in_pairing_immediately_below, team_of_player2_in_pairing_immediately_below)
+
+            if min_reg_team_immediately_below < max_reg_team:
+                return False, f'Your {i // 2 + 1} doubles contains a player registered to team {max_reg_team} which is better than one of the players on your {i // 2 + 2} doubles (registered to team {min_reg_team_immediately_below})'
+
     return True, None
 
 
-# TODO
+# TODO write and unit test
 def winter_lg_doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
     Checks that no doubles pairing is playing above a different pairing that played above them before
