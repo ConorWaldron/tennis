@@ -1,8 +1,8 @@
 import pandas as pd
-import os
 
 from eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, \
-    doubles_team_and_class_checker, doubles_right_order, team_tied
+    summer_lg_doubles_team_and_class_checker, summer_lg_doubles_right_order, team_tied, has_6_unique_reg_players,\
+    winter_lg_doubles_team_and_class_checker, winter_lg_doubles_right_order
 
 
 def summer_league_eligibility(team_number, proposed_team, team_df, subs_df, previous_weeks):
@@ -24,8 +24,8 @@ def summer_league_eligibility(team_number, proposed_team, team_df, subs_df, prev
     team_subs_and_lower_teams = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
 
     # Start checking the proposed team
-    for func in [has_7_unique_reg_players, team_played_before, singles_right_order, doubles_team_and_class_checker,
-                 doubles_right_order, team_tied]:
+    for func in [has_7_unique_reg_players, team_played_before, singles_right_order,
+                 summer_lg_doubles_team_and_class_checker, summer_lg_doubles_right_order, team_tied]:
         valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
             return valid, warning
@@ -51,8 +51,8 @@ def winter_league_eligibility(team_number, proposed_team, team_df, subs_df, prev
     team_subs_and_lower_teams = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
 
     # Start checking the proposed team
-    for func in [has_7_unique_reg_players, team_played_before, singles_right_order, doubles_team_and_class_checker,
-                 doubles_right_order, team_tied]:
+    for func in [has_6_unique_reg_players, team_played_before, team_tied,
+                 winter_lg_doubles_team_and_class_checker, winter_lg_doubles_right_order]:
         valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
             return valid, warning

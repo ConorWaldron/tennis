@@ -7,7 +7,7 @@ import pytest
 import pandas as pd
 
 from dashapp.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order,\
-    doubles_team_and_class_checker, doubles_right_order, team_tied
+    summer_lg_doubles_team_and_class_checker, summer_lg_doubles_right_order, team_tied
 
 
 # Define the fixtures
@@ -405,15 +405,18 @@ def test_doubles_team_and_class_checker(valid_team_4, team_4_invalid_doubles_cla
     you never play a doubles player above someone from a higher team
     """
     expected_value = True, None
-    actual_value = doubles_team_and_class_checker(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_team_and_class_checker(valid_team_4, team_4_df, team_4_subs_and_lower_class_df,
+                                                            prev_week2)
     assert expected_value == actual_value
 
     expected_value = False, 'Your 2nd doubles contains a class 4 player which is better than one of the players on your first doubles (class 5)'
-    actual_value = doubles_team_and_class_checker(team_4_invalid_doubles_class, team_4_df, team_4_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_team_and_class_checker(team_4_invalid_doubles_class, team_4_df,
+                                                            team_4_subs_and_lower_class_df, prev_week2)
     assert expected_value == actual_value
 
     expected_value = False, 'Your 2nd doubles contains a player registered to team 4 which is better than one of the players on your first doubles (registered to team 5)'
-    actual_value = doubles_team_and_class_checker(team_4_invalid_doubles_team, team_4_df, team_4_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_team_and_class_checker(team_4_invalid_doubles_team, team_4_df,
+                                                            team_4_subs_and_lower_class_df, prev_week2)
     assert expected_value == actual_value
 
 
@@ -428,15 +431,15 @@ def test_doubles_right_order(valid_team_4, team_3_invalid_doubles_order, team_2_
     you never play a 2nd doubles reg team ahead of a 1st doubles reg team
     """
     expected_value = True, None
-    actual_value = doubles_right_order(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_right_order(valid_team_4, team_4_df, team_4_subs_and_lower_class_df, prev_week2)
     assert expected_value == actual_value
 
     expected_value = False, 'Your 2nd doubles pairing have played above your first doubles pairing in a previous week'
-    actual_value = doubles_right_order(team_2_invalid_doubles_order, team_2_df, team_2_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_right_order(team_2_invalid_doubles_order, team_2_df, team_2_subs_and_lower_class_df, prev_week2)
     assert expected_value == actual_value
 
     expected_value = False, 'all 4 registered players are playing doubles, but not in the right order'
-    actual_value = doubles_right_order(team_3_invalid_doubles_order, team_3_df, team_3_subs_and_lower_class_df, prev_week2)
+    actual_value = summer_lg_doubles_right_order(team_3_invalid_doubles_order, team_3_df, team_3_subs_and_lower_class_df, prev_week2)
     assert expected_value == actual_value
 
 

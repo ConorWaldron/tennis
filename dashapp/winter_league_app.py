@@ -2,7 +2,7 @@ from dash import Dash, dcc, html, dash_table, Input, Output, State, callback_con
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import pandas as pd
-from leagues import summer_league_eligibility
+from leagues import winter_league_eligibility
 from tennis_callbacks import update_suggested_player
 import os
 import io
@@ -11,18 +11,18 @@ import base64
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])  # you can pick from the different standard themes at https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/explorer/
 
 server = app.server      # exposes server of dash app as an objective that gunicorn can pick
-app.title = 'Summer League Eligibility Checker'  # set the title to appear in the tab
+app.title = 'Winter League Eligibility Checker'  # set the title to appear in the tab
 
 
 ########################### Define all my data objects #####################################################################
 
-reg_team = pd.read_csv('../assets/summer_league/teams.csv')
+reg_team = pd.read_csv('../assets/winter_league/teams.csv')
 reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
 reg_team_relevant = reg_team_relevant.rename(columns={'Name': 'Registered'})
 
-reg_subs = pd.read_csv('../assets/summer_league/subs.csv')
+reg_subs = pd.read_csv('../assets/winter_league/subs.csv')
 
-prev_weeks = pd.read_csv('../assets/summer_league/previous_weeks.csv')
+prev_weeks = pd.read_csv('../assets/winter_league/previous_weeks.csv')
 reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Position'])
 
 registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
@@ -158,20 +158,18 @@ instruct_tab = dbc.Card(
 
 player_selection = html.Div([
     html.Div(dbc.Button("Disable autoprompts", id="autoprompts-button", color="primary", className="me-1")),
-    dcc.Input(id='input_player_1', type='text', placeholder='Singles 1'),
+    dcc.Input(id='input_player_1', type='text', placeholder='Doubles 1'),
     html.Div(id='autoprompt-output-player-1'),
-    dcc.Input(id='input_player_2', type='text', placeholder='Singles 2'),
+    dcc.Input(id='input_player_2', type='text', placeholder='Doubles 1'),
     html.Div(id='autoprompt-output-player-2'),
-    dcc.Input(id='input_player_3', type='text', placeholder='Singles 3'),
+    dcc.Input(id='input_player_3', type='text', placeholder='Doubles 2'),
     html.Div(id='autoprompt-output-player-3'),
-    dcc.Input(id='input_player_4', type='text', placeholder='Doubles 1'),
+    dcc.Input(id='input_player_4', type='text', placeholder='Doubles 2'),
     html.Div(id='autoprompt-output-player-4'),
-    dcc.Input(id='input_player_5', type='text', placeholder='Doubles 1'),
+    dcc.Input(id='input_player_5', type='text', placeholder='Doubles 3'),
     html.Div(id='autoprompt-output-player-5'),
-    dcc.Input(id='input_player_6', type='text', placeholder='Doubles 2'),
+    dcc.Input(id='input_player_6', type='text', placeholder='Doubles 3'),
     html.Div(id='autoprompt-output-player-6'),
-    dcc.Input(id='input_player_7', type='text', placeholder='Doubles 2'),
-    html.Div(id='autoprompt-output-player-7'),
 ])
 
 check_eligibility_area = html.Div([
@@ -270,7 +268,7 @@ left_right_sections_for_middle = dbc.Container(
 
 full_section = html.Div(
     [
-    html.H2('Web App to Check if Summer League Team meets DLTC Eligibility Rules',  style=HEADING_STYLE),
+    html.H2('Web App to Check if Winter League Team meets DLTC Eligibility Rules',  style=HEADING_STYLE),
     html.Br(),
     left_right_sections_for_top,
     html.Br(),
@@ -317,7 +315,7 @@ def update_team_file(contents):
     expected_columns = ['Name', 'Team', 'Class', 'Position']
     if not set(expected_columns).issubset(df.columns):
         warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/teams_template.csv')
+        old_df = pd.read_csv('../assets/winter_league/teams_template.csv')
         return old_df.to_dict('records'), warning_message
 
     return df.to_dict('records'), ''
@@ -344,7 +342,7 @@ def update_sub_file(contents):
     expected_columns = ['Name', 'Class']
     if not set(expected_columns).issubset(df.columns):
         warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/subs_template.csv')
+        old_df = pd.read_csv('../assets/winter_league/subs_template.csv')
         return old_df.to_dict('records'), warning_message
 
     return df.to_dict('records'), ''
@@ -371,7 +369,7 @@ def update_prev_week_file(contents):
     expected_columns = ['Team', 'Position', 'Week1', 'Week2', 'Week3', 'Week4', 'Week5']
     if not set(expected_columns).issubset(df.columns):
         warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
+        old_df = pd.read_csv('../assets/winter_league/previous_weeks_template.csv')
         return old_df.to_dict('records'), warning_message
 
     return df.to_dict('records'), ''
@@ -408,7 +406,7 @@ def download_team_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
-        teams_template_df = pd.read_csv('../assets/summer_league/teams_template.csv')
+        teams_template_df = pd.read_csv('../assets/winter_league/teams_template.csv')
         return dcc.send_data_frame(teams_template_df.to_excel, "TeamsTemplate.xlsx")
 
 
@@ -420,7 +418,7 @@ def download_sub_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
-        subs_template_df = pd.read_csv('../assets/summer_league/subs_template.csv')
+        subs_template_df = pd.read_csv('../assets/winter_league/subs_template.csv')
         return dcc.send_data_frame(subs_template_df.to_excel, "SubsTemplate.xlsx")
 
 
@@ -432,7 +430,7 @@ def download_previous_week_template(nclickslocal):
     if nclickslocal == 0:
         raise PreventUpdate
     else:
-        previous_weeks_template_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
+        previous_weeks_template_df = pd.read_csv('../assets/winter_league/previous_weeks_template.csv')
         return dcc.send_data_frame(previous_weeks_template_df.to_excel, "PreviousWeeksTemplate.xlsx")
 
 
@@ -607,21 +605,6 @@ def update_suggested_player_6(value, n_clicks, team_data, sub_data):
 
 
 @app.callback(
-    Output('autoprompt-output-player-7', 'children'),
-    Input('input_player_7', 'value'),
-    Input("autoprompts-button", "n_clicks"),
-    Input('team-store', 'data'),  # Input the team dataframe from the dcc.Store
-    Input('sub-store', 'data'),  # Input the sub dataframe from the dcc.Store
-)
-def update_suggested_player_7(value, n_clicks, team_data, sub_data):
-    team_df = pd.DataFrame(team_data) if team_data else reg_team
-    sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
-    available_df = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
-    available_players_list = available_df['Name'].tolist()
-    return update_suggested_player(value, available_players_list, n_clicks)
-
-
-@app.callback(
     Output("button-true", "color"),
     Output("button-false", "color"),
     Output("eligibility-output", "children"),
@@ -636,11 +619,10 @@ def update_suggested_player_7(value, n_clicks, team_data, sub_data):
     State("input_player_4", "value"),
     State("input_player_5", "value"),
     State("input_player_6", "value"),
-    State("input_player_7", "value"),
 )
 def update_eligibility_result_button_state(n_clicks, team_data, sub_data, previous_week_data, team_dropdown,
                                            input_player_1, input_player_2, input_player_3, input_player_4,
-                                           input_player_5, input_player_6, input_player_7):
+                                           input_player_5, input_player_6):
     if n_clicks is None or n_clicks == 0:
         return 'secondary', 'secondary', 'Have not run eligibility checker yet'
 
@@ -649,15 +631,14 @@ def update_eligibility_result_button_state(n_clicks, team_data, sub_data, previo
     prev_week_df = pd.DataFrame(previous_week_data) if previous_week_data else prev_weeks
 
     my_proposed_team = {
-        'S1': input_player_1,
-        'S2': input_player_2,
-        'S3': input_player_3,
-        'D1': input_player_4,
-        'D1B': input_player_5,
-        'D2': input_player_6,
-        'D2B': input_player_7,
+        'D1': input_player_1,
+        'D1B': input_player_2,
+        'D2': input_player_3,
+        'D2B': input_player_4,
+        'D3': input_player_5,
+        'D3B': input_player_6,
     }
-    eligible_result, warning = summer_league_eligibility(int(team_dropdown), my_proposed_team,
+    eligible_result, warning = winter_league_eligibility(int(team_dropdown), my_proposed_team,
                                                          team_df, sub_df, prev_week_df)
     if eligible_result:
         return 'primary', 'secondary', warning

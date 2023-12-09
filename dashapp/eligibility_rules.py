@@ -35,23 +35,30 @@ def team_played_before(proposed_team, registered_team, team_subs_and_lower_teams
     team_number = registered_team['Class'].iloc(0)[0]
     relevant_team_previous_weeks = previous_weeks[previous_weeks['Team'] == team_number]
 
+    if len(set_registered_team) == 7:
+        # this must be summer league
+        position_list = ['S1', 'S2', 'S3', 'D1', 'D1B', 'D2', 'D2B']
+    else:
+        # this must be winter league
+        position_list = ['D1', 'D1B', 'D2', 'D2B', 'D3', 'D3B']
+
     if set_registered_team == set_proposed_team:
-        for position in ['S1', 'S2', 'S3', 'D1', 'D1B', 'D2', 'D2B']:
+        for position in position_list:
             proposed_player = proposed_team[position]
             proposed_players_reg_position = registered_team[registered_team['Name']==proposed_player]['Position'].iloc(0)[0]
             if position[0:2] != proposed_players_reg_position[0:2]: # note use of [0:2] at end to swap position D1B to D1
-                return False, f"you are using the same 7 players as your registered team but {proposed_player} is not playing in the registered position of {proposed_players_reg_position[0:2]}"
+                return False, f"you are using the same players as your registered team but {proposed_player} is not playing in the registered position of {proposed_players_reg_position[0:2]}"
 
     for i in range(5):
         week = 'Week'+str(i+1)
         set_players_week_i = set(relevant_team_previous_weeks[week].values)
         if set_players_week_i == set_proposed_team:
             prev_team = relevant_team_previous_weeks[['Position', week]]
-            for position in ['S1', 'S2', 'S3', 'D1', 'D1B', 'D2', 'D2B']:
+            for position in position_list:
                 proposed_player = proposed_team[position]
                 proposed_players_old_position = prev_team[prev_team[week] == proposed_player]['Position'].iloc(0)[0]
                 if position[0:2] != proposed_players_old_position[0:2]:  # note use of [0:2] at end to swap position D1B to D1
-                    return False, f"you are using the same 7 players as week {i+1} team but {proposed_player} is not playing in the old position of {proposed_players_old_position[0:2]}"
+                    return False, f"you are using the same players as week {i+1} team but {proposed_player} is not playing in the old position of {proposed_players_old_position[0:2]}"
 
     return True, None
 
@@ -118,8 +125,7 @@ def singles_right_order(proposed_team, registered_team, team_subs_and_lower_team
     return True, None
 
 
-
-def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+def summer_lg_doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
     Checks that no doubles player is playing above someone of a better class
     Checks that no doubles player is playing above someone from a better team
@@ -171,7 +177,7 @@ def doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and
     return True, None
 
 
-def doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+def summer_lg_doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
     Checks that no doubles pairing is playing above a different pairing that played above them before
 
@@ -261,3 +267,55 @@ def team_tied(proposed_team, registered_team, team_subs_and_lower_teams, previou
             return False, f'{player} is inelgiible due to team tying, he has played for a higher team on {len(higher_teams)} occasions'
 
     return True, None
+
+
+def has_6_unique_reg_players(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+    """
+    Checks that there are 6 unique players on the team that are in the subs and lower team list
+    :param proposed_team: dict with key:val like 'D1':'Conor Waldron', it will always have 6 entires one for each D1, D1B, D2, D2B, D3, D3B
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    required_players = ['D1', 'D1B', 'D2', 'D2B', 'D3', 'D3B']
+    team = set()
+    for position in required_players:
+        if position not in proposed_team.keys():
+            return False, f'no player was entered in position {position}'
+        if proposed_team[position] in team:
+            return False, f'you entered {proposed_team[position]} twice'
+        if proposed_team[position] not in team_subs_and_lower_teams['Name'].values:
+            return False, f'{proposed_team[position]} is not in the list of valid subs or registered teams at or below this class level'
+        team.add(proposed_team[position])
+    return True, None
+
+
+# TODO
+def winter_lg_doubles_team_and_class_checker(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+    """
+    Checks that no doubles player is playing above someone of a better class
+    Checks that no doubles player is playing above someone from a better team
+
+    :param proposed_team: dict with key:val like 'D1':'Conor Waldron', it will always have 6 entires one for each D1, D1B, D2, D2B, D3, D3B
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    return True, None
+
+
+# TODO
+def winter_lg_doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+    """
+    Checks that no doubles pairing is playing above a different pairing that played above them before
+
+    :param proposed_team: dict with key:val like 'D1':'Conor Waldron', it will always have 6 entires one for each D1, D1B, D2, D2B, D3, D3B
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    return True, None
+
