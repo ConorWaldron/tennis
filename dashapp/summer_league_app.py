@@ -5,7 +5,7 @@ from dash import Dash, dcc, html, dash_table, Input, Output, State, callback_con
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import pandas as pd
-from summer_league import summer_league_eligibility
+from leagues import summer_league_eligibility
 from tennis_callbacks import update_suggested_player
 import os
 import io
@@ -290,9 +290,6 @@ content = html.Div(
     dcc.Store(id='sub-store', storage_type='session'),  # Store the sub dataframe in the session
     dcc.Store(id='previous-week-store', storage_type='session'),  # Store the previous week dataframe in the session
     full_section,
-    #html.Div(id='output-team-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
-    #html.Div(id='output-sub-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
-    #html.Div(id='output-previous-upload'),  # will delete later when I use upload for processing instead of displaying upload as table, but needs to be somewhere for now
     ]
 )
 app.layout = content

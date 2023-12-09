@@ -1,5 +1,5 @@
 
-from dashapp.summer_league import summer_league_eligibility
+from dashapp.leagues import summer_league_eligibility
 import pandas as pd
 
 if __name__ == '__main__':
