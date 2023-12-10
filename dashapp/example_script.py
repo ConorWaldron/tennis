@@ -1,5 +1,5 @@
 from leagues import summer_league_eligibility, winter_league_eligibility
-from eligibility_rules import winter_lg_doubles_team_and_class_checker, winter_lg_doubles_right_order
+from eligibility_rules import winter_lg_doubles_team_and_class_checker, winter_lg_doubles_reg_6_right_order, winter_lg_doubles_previous_orders
 import pandas as pd
 
 if __name__ == '__main__':
@@ -25,12 +25,12 @@ if __name__ == '__main__':
     winter_prev_weeks = pd.read_csv('../assets/winter_league/previous_weeks.csv')
 
     winter_my_proposed_team = {
-        'D1': "Neil Stokes",
-        'D1B': "Ronan O'Brien",
-        'D2': "Adam Escalante",
-        'D2B': "James Doyle",
-        'D3': "Mark Cloonan",
-        'D3B': "Conor Waldron",
+        'D1': "Ronan O'Brien",
+        'D1B': "Adam Casey",
+        'D2': "Conor Waldron",
+        'D2B': "Mark Cloonan",
+        'D3': "Joseph Kelleher",
+        'D3B': "Shane Bergin",
     }
 
     #eligible, warning = winter_league_eligibility(3, winter_my_proposed_team, winter_reg_team, winter_reg_subs, winter_prev_weeks)
@@ -45,5 +45,10 @@ if __name__ == '__main__':
     team_of_interest = relevant_team[['Name', 'Class', 'Team']]
     team_subs_and_lower_teams = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
     previous_weeks = winter_prev_weeks
-    valid, message = winter_lg_doubles_team_and_class_checker(winter_my_proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
+
+    #valid, message = winter_lg_doubles_team_and_class_checker(winter_my_proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
+    #print(message)
+
+    valid, message = winter_lg_doubles_team_and_class_checker(winter_my_proposed_team, relevant_team,
+                                                         team_subs_and_lower_teams, previous_weeks)
     print(message)

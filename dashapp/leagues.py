@@ -2,7 +2,7 @@ import pandas as pd
 
 from eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order, \
     summer_lg_doubles_team_and_class_checker, summer_lg_doubles_right_order, team_tied, has_6_unique_reg_players,\
-    winter_lg_doubles_team_and_class_checker, winter_lg_doubles_right_order
+    winter_lg_doubles_team_and_class_checker, winter_lg_doubles_reg_6_right_order, winter_lg_doubles_previous_orders
 
 
 def summer_league_eligibility(team_number, proposed_team, team_df, subs_df, previous_weeks):
@@ -52,7 +52,8 @@ def winter_league_eligibility(team_number, proposed_team, team_df, subs_df, prev
 
     # Start checking the proposed team
     for func in [has_6_unique_reg_players, team_played_before, team_tied,
-                 winter_lg_doubles_team_and_class_checker, winter_lg_doubles_right_order]:
+                 winter_lg_doubles_team_and_class_checker, winter_lg_doubles_reg_6_right_order,
+                 winter_lg_doubles_previous_orders]:
         valid, warning = func(proposed_team, relevant_team, team_subs_and_lower_teams, previous_weeks)
         if valid == False:
             return valid, warning

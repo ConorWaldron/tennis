@@ -327,6 +327,10 @@ def winter_lg_doubles_team_and_class_checker(proposed_team, registered_team, tea
 
         # Checks that no doubles player is playing above someone from a better team
         if (team_player1 != 'Sub') or (team_player2 != 'Sub'):
+            if team_player1 == 'Sub':
+                team_player1 = 0 # set to lowest team possible
+            if team_player2 == 'Sub':
+                team_player2 = 0 # set to lowest team possible
             max_reg_team = max(team_player1, team_player2)
             # lower players could be subs
             team_of_player1_in_pairing_immediately_below = team_subs_and_lower_teams[team_subs_and_lower_teams['Name'] == proposed_team[doubles_pairs[i + 2]]]['Team'].iloc(0)[0]
@@ -344,10 +348,9 @@ def winter_lg_doubles_team_and_class_checker(proposed_team, registered_team, tea
     return True, None
 
 
-# TODO write and unit test
-def winter_lg_doubles_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+def winter_lg_doubles_reg_6_right_order(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
     """
-    Checks that no doubles pairing is playing above a different pairing that played above them before
+    Checks that if you are using your 6 registered players, that they match the registration order
 
     :param proposed_team: dict with key:val like 'D1':'Conor Waldron', it will always have 6 entires one for each D1, D1B, D2, D2B, D3, D3B
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
@@ -355,5 +358,108 @@ def winter_lg_doubles_right_order(proposed_team, registered_team, team_subs_and_
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
-    return True, None
+    doubles_pairs = ['D1', 'D1B', 'D2', 'D2B', 'D3', 'D3B']  # Add the third doubles pairings
 
+    registered_doubles_players = set()
+    proposed_doubles_players = set()
+
+    # Collect registered and proposed doubles players
+    for pos in doubles_pairs:
+        registered_doubles_players.add(registered_team[registered_team['Position'] == pos]['Name'].iloc(0)[0])
+        proposed_doubles_players.add(proposed_team[pos])
+
+    if registered_doubles_players == proposed_doubles_players:
+        # Check the order of the doubles pairs
+        for i in range(0, len(doubles_pairs), 2):
+            reg_pair = set()
+            reg_pair.add(registered_team[registered_team['Position'] == doubles_pairs[i]]['Name'].iloc(0)[0])
+            reg_pair.add(registered_team[registered_team['Position'] == doubles_pairs[i + 1]]['Name'].iloc(0)[0])
+
+            proposed_pair = set()
+            proposed_pair.add(proposed_team[doubles_pairs[i]])
+            proposed_pair.add(proposed_team[doubles_pairs[i + 1]])
+
+            if reg_pair != proposed_pair:
+                return False, 'All 6 registered players are playing, but not in the right order'
+        return True, None # you are using your 6 registered players in the right order
+    return True, None # you are not using your 6 registered players, so this function is not needed
+
+
+def winter_lg_doubles_previous_orders(proposed_team, registered_team, team_subs_and_lower_teams, previous_weeks):
+    """
+    Checks that no doubles pairing is playing above a pairing that they previously played below on a prior week
+
+    :param proposed_team: dict with key:val like 'D1':'Conor Waldron', it will always have 6 entires one for each D1, D1B, D2, D2B, D3, D3B
+    :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
+    :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
+    :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
+    :return: bool, str: the string is the reason why the test failed if it failed
+    """
+    doubles_pairs = ['D1', 'D1B', 'D2', 'D2B', 'D3', 'D3B']  # Add the third doubles pairings
+
+    # Build a dictionary with of your proposed pairings, where the keys are 1, 2, 3 and the values are sets of the 2 player names
+    proposed_pairings_dict = {}
+    # Build a dictionary with of lists of players who played above your proposed pairings, where the keys are 1, 2, 3 and the values are lists of sets of pairings who played ahead of them
+    dict_of_who_played_above_pairings = {}
+    for i in range(0, len(doubles_pairs), 2):
+        # Take two players and but them into pairs at a time
+        pair = doubles_pairs[i:i + 2]
+        player_1_of_pairing = proposed_team[pair[0]]
+        player_2_of_pairing = proposed_team[pair[1]]
+        proposed_pairings_dict[i/2 + 1] = {player_1_of_pairing, player_2_of_pairing}
+        dict_of_who_played_above_pairings[i/2 + 1] = [] # initilise the list of pairings who played above this proposed pairing as an empty list
+
+    # Check in previous weeks have any of your proposed pairings every played together before?
+    # If so then build up a dictionary of those pairings who played above them in the past.
+    for i in range(5):
+        week = 'Week' + str(i + 1)
+        that_week = previous_weeks[['Team', 'Position', week]]
+        for proposed_pairing_number, proposed_pairing in enumerate(proposed_pairings_dict.values()):
+            proposed_pairing_tuple = tuple(proposed_pairing)
+            player_1 = proposed_pairing_tuple[0]
+            player_2 = proposed_pairing_tuple[1]
+
+            player1_played_previous_raw = that_week[that_week[week] == player_1][['Team', 'Position']].values
+            player2_played_previous_raw = that_week[that_week[week] == player_2][['Team', 'Position']].values
+            try: # handle nulls if player has not played before
+                player1_played_previous = player1_played_previous_raw[0]
+            except:
+                player1_played_previous = ['not played', 'not played']
+            try:  # handle nulls if player has not played before
+                player2_played_previous = player2_played_previous_raw[0]
+            except:
+                player2_played_previous = ['not played', 'not played']
+            # check if they played together
+            if player1_played_previous[0] == player2_played_previous[0]: # played on same team
+                if player1_played_previous[1][0:2] == player2_played_previous[1][0:2]: # they were a pairing!
+                    # add all the doubles players who played above them to a set to record who played above them
+                    # Iterate through the list in reverse, taking two elements at a time
+                    team_that_week = that_week[that_week['Team'] == player1_played_previous[0]][['Position', week]]
+                    start_adding_higher_pairs = False
+                    for i in range(len(doubles_pairs) - 1, 0, -2):
+                        a_pair = doubles_pairs[i - 1:i + 1]
+                        if start_adding_higher_pairs:
+                            higher_player_1 = team_that_week[team_that_week['Position'] == a_pair[0]][week].values[0]
+                            higher_player_2 = team_that_week[team_that_week['Position'] == a_pair[1]][week].values[0]
+                            dict_of_who_played_above_pairings[proposed_pairing_number + 1].append({higher_player_1, higher_player_2})
+
+                        if player1_played_previous[1][0:2] == a_pair[0][0:2]:
+                            # you found what position they were playing in, now add all the higher pairs to the list
+                            start_adding_higher_pairs = True
+
+    # now that the dictionary is prepared, we should look to see if the proposed pairings violate the higher players in the dictionary
+    # starting with the highest pairing, check if they are above any of the players in their own dict of players that played above them in previous weeks
+    for doubles_position, pairing in proposed_pairings_dict.items():
+        list_of_pairings_who_played_higher = dict_of_who_played_above_pairings[doubles_position]
+        for higher_pairing in list_of_pairings_who_played_higher:
+            # check if that is one of the proposed pairings
+            if higher_pairing in proposed_pairings_dict.values():
+                # find the position of the previous higher pairing
+                for key, value in proposed_pairings_dict.items():
+                    if value == higher_pairing:
+                        previous_higher_pair_position = key
+                        break
+                if doubles_position < previous_higher_pair_position:
+                    return False, f'Your {int(doubles_position)} doubles pairing is illegal as they are playing above a pairing who on a previous week had played higher than they had'
+
+    return True, None

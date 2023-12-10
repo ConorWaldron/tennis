@@ -7,7 +7,7 @@ import pytest
 import pandas as pd
 
 from dashapp.eligibility_rules import team_played_before, winter_lg_doubles_team_and_class_checker,\
-    winter_lg_doubles_right_order, team_tied, has_6_unique_reg_players
+    winter_lg_doubles_reg_6_right_order, team_tied, has_6_unique_reg_players, winter_lg_doubles_previous_orders
 
 
 # Define the fixtures
@@ -113,6 +113,11 @@ def winter_prev_week3():
     winter_prev_week3 = pd.read_csv('unittest_data/winter_after_week3.csv')
     return winter_prev_week3
 
+@pytest.fixture(scope='session')
+def winter_prev_week4():
+    winter_prev_week4 = pd.read_csv('unittest_data/winter_after_week4.csv')
+    return winter_prev_week4
+
 
 @pytest.fixture(scope='session')
 def winter_proposed_team_3_valid():
@@ -125,6 +130,18 @@ def winter_proposed_team_3_valid():
         'D3B': "Conor Waldron",
     }
     return winter_proposed_team_3_valid
+
+@pytest.fixture(scope='session')
+def winter_proposed_team_3_invalid_wrong_order():
+    winter_proposed_team_3_invalid_wrong_order = {
+        'D1': "Ronan O'Brien",
+        'D1B': "Conor Waldron",
+        'D2': "Adam Escalante",
+        'D2B': "James Doyle",
+        'D3': "Mark Cloonan",
+        'D3B': "Neil Stokes",
+    }
+    return winter_proposed_team_3_invalid_wrong_order
 
 @pytest.fixture(scope='session')
 def winter_proposed_team_3_only_5_players():
@@ -210,6 +227,43 @@ def winter_proposed_team_2_invalid_better_team():
     }
     return winter_proposed_team_2_invalid_better_team
 
+@pytest.fixture(scope='session')
+def winter_proposed_team_7_valid():
+    winter_proposed_team_7_valid = {
+        'D1': "Kabir Kalia",
+        'D1B': "Nitin Swarup",
+        'D2': "Max LeBrocquy",
+        'D2B': "Matthew Hanrahan",
+        'D3': "Ryan McGrath",
+        'D3B': "Owen McGuigan",
+    }
+    return winter_proposed_team_7_valid
+
+@pytest.fixture(scope='session')
+def winter_proposed_team_7_invalid_order():
+    winter_proposed_team_7_invalid_order = {
+        'D1': "Kabir Kalia",
+        'D1B': "Nitin Swarup",
+        'D2': "Max LeBrocquy",
+        'D2B': "Owen McGuigan",
+        'D3': "Ryan McGrath",
+        'D3B': "Conor O'Leary",
+    }
+    return winter_proposed_team_7_invalid_order
+
+
+@pytest.fixture(scope='session')
+def winter_proposed_team_3_invalid_order():
+    winter_proposed_team_3_invalid_order = {
+        'D1': "Ronan O'Brien",
+        'D1B': "Adam Casey",
+        'D2': "Conor Waldron",
+        'D2B': "Mark Cloonan",
+        'D3': "Joseph Kelleher",
+        'D3B': "Shane Bergin",
+    }
+    return winter_proposed_team_3_invalid_order
+
 #######################################################################################################################
 
 #@pytest.mark.skip
@@ -244,7 +298,8 @@ def test_winter_lg_doubles_team_and_class_checker(winter_team_3_df, winter_team_
                                   winter_team_2_df, winter_team_2_subs_and_lower_class_df,
                                   winter_proposed_team_3_valid, winter_proposed_team_3_invalid_better_class,
                                   winter_proposed_team_3_invalid_better_class2,
-                                  winter_proposed_team_2_valid, winter_proposed_team_2_invalid_better_team):
+                                  winter_proposed_team_2_valid, winter_proposed_team_2_invalid_better_team,
+                                  winter_proposed_team_3_invalid_order):
     '''
     Checks that
     you never play a doubles player above someone of a better class
@@ -269,3 +324,52 @@ def test_winter_lg_doubles_team_and_class_checker(winter_team_3_df, winter_team_
     expected_value = False, 'Your 2 doubles contains a player registered to team 3 which is better than one of the players on your 3 doubles (registered to team 2)'
     actual_value = winter_lg_doubles_team_and_class_checker(winter_proposed_team_2_invalid_better_team,  winter_team_2_df, winter_team_2_subs_and_lower_class_df, None)
     assert expected_value == actual_value
+
+    expected_value = True, None
+    actual_value = winter_lg_doubles_team_and_class_checker(winter_proposed_team_3_invalid_order, winter_team_3_df, winter_team_3_subs_and_lower_class_df, None)
+    assert expected_value == actual_value
+
+
+def test_winter_lg_doubles_reg_6_right_order(winter_team_3_df, winter_team_3_subs_and_lower_class_df,
+                                             winter_proposed_team_3_valid, winter_proposed_team_3_invalid_wrong_order,
+                                             winter_proposed_team_3_invalid_order):
+    '''
+    Checks that no doubles pairing is playing above a different pairing that played above them before
+    '''
+    expected_value = True, None
+    actual_value = winter_lg_doubles_reg_6_right_order(winter_proposed_team_3_valid, winter_team_3_df, winter_team_3_subs_and_lower_class_df, None)
+    assert expected_value == actual_value
+
+    expected_value = False, 'All 6 registered players are playing, but not in the right order'
+    actual_value = winter_lg_doubles_reg_6_right_order(winter_proposed_team_3_invalid_wrong_order, winter_team_3_df, winter_team_3_subs_and_lower_class_df, None)
+    assert expected_value == actual_value
+
+    expected_value = True, None
+    actual_value = winter_lg_doubles_reg_6_right_order(winter_proposed_team_3_invalid_order, winter_team_3_df, winter_team_3_subs_and_lower_class_df, None)
+    assert expected_value == actual_value
+
+
+def test_winter_lg_doubles_previous_orders(winter_team_3_df, winter_team_3_subs_and_lower_class_df,
+                                           winter_team_7_df, winter_team_7_subs_and_lower_class_df,
+                                           winter_prev_week3, winter_prev_week4,
+                                           winter_proposed_team_3_valid, winter_proposed_team_7_valid,
+                                           winter_proposed_team_7_invalid_order, winter_proposed_team_3_invalid_order):
+    '''
+    Checks that no doubles pairing is playing above a different pairing that played above them before
+    '''
+    expected_value = True, None
+    actual_value = winter_lg_doubles_previous_orders(winter_proposed_team_3_valid, winter_team_3_df, winter_team_3_subs_and_lower_class_df, winter_prev_week3)
+    assert expected_value == actual_value
+
+    expected_value = True, None
+    actual_value = winter_lg_doubles_previous_orders(winter_proposed_team_7_valid, winter_team_7_df, winter_team_7_subs_and_lower_class_df, winter_prev_week3)
+    assert expected_value == actual_value
+
+    expected_value = False, 'Your 2 doubles pairing is illegal as they are playing above a pairing who on a previous week had played higher than they had'
+    actual_value = winter_lg_doubles_previous_orders(winter_proposed_team_7_invalid_order, winter_team_7_df, winter_team_7_subs_and_lower_class_df, winter_prev_week3)
+    assert expected_value == actual_value
+
+    expected_value = False, 'Your 2 doubles pairing is illegal as they are playing above a pairing who on a previous week had played higher than they had'
+    actual_value = winter_lg_doubles_previous_orders(winter_proposed_team_3_invalid_order, winter_team_3_df, winter_team_3_subs_and_lower_class_df, winter_prev_week4)
+    assert expected_value == actual_value
+
