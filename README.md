@@ -7,6 +7,8 @@ You can create a docker image using the Dockerfile by running the below command 
 
 You can view this image with the command 'docker images'
 
+Note you can have multiple docker files and then specify which one to use to build an image with the -f arugment for filepath 'docker build -f Dockerfile.winter -t conorwaldron512/winter_league_webapp:1.0 .'
+
 You can run the docker image locally (if you have Docker installed and you have created or pulled the image) with the command below. Note that we pick a random port (8888) on the host side but we must use the port 5000 on the container side as that was specified in app.py
 'docker run -d -p 8888:5000 conorwaldron512/summer_league_webapp:1.0'
 If you then go to localhost:8888 you can see the web app working locally, the same as if you ran app.py from pycharm on your local machine
