@@ -1,52 +1,66 @@
 '''
-run with    pytest tests_summer.py -vv
-if pytest is not installed properly, you can try to run with python -m pytest tests_summer.py -vv
+run with    pytest test_summer.py -vv
+if pytest is not installed properly, you can try to run with python -m pytest test_summer.py -vv
 '''
 
 import pytest
 import pandas as pd
+import os
 
 from dashapp.eligibility_rules import has_7_unique_reg_players, team_played_before, singles_right_order,\
     summer_lg_doubles_team_and_class_checker, summer_lg_doubles_right_order, team_tied
 
 
-# Define the fixtures
+def read_file_with_absolute_path(relative_path):
+    """
+    :param relative_path: str
+    :return df: pd dataframe
 
+    note we use relative paths so the unit tests run both on the local machine when the filepath is C:/Users/conor/repos/tennis/dashapp
+    and on the github action runner when the filepath is /home/runner/work/tennis/tennis/dashapp
+    """
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    absolute_path = os.path.join(current_directory, relative_path)
+    df = pd.read_csv(absolute_path)
+    return df
+
+
+# Define the fixtures
 @pytest.fixture(scope='session')
 def summer_team_7_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     summer_team_7_df = team_df[team_df['Team'] == 7]
     return summer_team_7_df
 
 
 @pytest.fixture(scope='session')
 def summer_team_4_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     summer_team_4_df = team_df[team_df['Team'] == 4]
     return summer_team_4_df
 
 
 @pytest.fixture(scope='session')
 def summer_team_3_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     summer_team_3_df = team_df[team_df['Team'] == 3]
     return summer_team_3_df
 
 
 @pytest.fixture(scope='session')
 def summer_team_2_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     summer_team_2_df = team_df[team_df['Team'] == 2]
     return summer_team_2_df
 
 
 @pytest.fixture(scope='session')
 def summer_team_7_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     team_7_df = team_df[team_df['Team'] == 7]
     lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/summer_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/summer_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 7].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_7_df[['Name', 'Class', 'Team']]
@@ -56,11 +70,11 @@ def summer_team_7_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def summer_team_4_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
     lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/summer_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/summer_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 4].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_4_df[['Name', 'Class', 'Team']]
@@ -70,11 +84,11 @@ def summer_team_4_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def summer_team_3_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     team_3_df = team_df[team_df['Team'] == 3]
     lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/summer_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/summer_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 3].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_3_df[['Name', 'Class', 'Team']]
@@ -84,11 +98,11 @@ def summer_team_3_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def summer_team_2_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/summer_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
     lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/summer_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/summer_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 2].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_2_df[['Name', 'Class', 'Team']]
@@ -98,19 +112,19 @@ def summer_team_2_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def summer_prev_week1():
-    summer_prev_week1 = pd.read_csv('unittest_data/summer_after_week1.csv')
+    summer_prev_week1 = read_file_with_absolute_path('unittest_data/summer_after_week1.csv')
     return summer_prev_week1
 
 
 @pytest.fixture(scope='session')
 def summer_prev_week2():
-    summer_prev_week2 = pd.read_csv('unittest_data/summer_after_week2.csv')
+    summer_prev_week2 = read_file_with_absolute_path('unittest_data/summer_after_week2.csv')
     return summer_prev_week2
 
 
 @pytest.fixture(scope='session')
 def summer_prev_week3():
-    summer_prev_week3 = pd.read_csv('unittest_data/summer_after_week3.csv')
+    summer_prev_week3 = read_file_with_absolute_path('unittest_data/summer_after_week3.csv')
     return summer_prev_week3
 
 
