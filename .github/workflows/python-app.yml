@@ -1,12 +1,12 @@
 # This workflow will install Python dependencies and run tests with a single version of Python
 name: Python unit test
+
 on:
   pull_request:
     branches: [ "main" ]
-permissions:
-  contents: read
+
 jobs:
-  build:
+  conors_unit_test_job:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -23,6 +23,7 @@ jobs:
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
    
-    - name: Test with pytest
+    - name: Test with pytest from within the dashapp directory
+      working-directory: tennis/dashapp
       run: |
         pytest
