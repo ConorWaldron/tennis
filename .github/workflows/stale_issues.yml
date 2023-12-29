@@ -1,8 +1,8 @@
 name: Close inactive issues
 on:
   schedule:
-    - cron: "*/2 16 * * *"
-  workflow_dispatch 
+    - cron: "7 16 * * *"
+  workflow_dispatch: 
 
 jobs:
   conor-close-issues:
