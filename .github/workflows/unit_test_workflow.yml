@@ -26,4 +26,6 @@ jobs:
     - name: Test with pytest from within the dashapp directory
       working-directory: dashapp
       run: |
+        pwd
+        ls
         pytest
