@@ -20,7 +20,7 @@ jobs:
           LABELS: triage
 
       - name: assign the issue
-        run: gh issue edit "$NUMBER" --add-assignee conor.waldron@gmail.com
+        run: gh issue edit "$NUMBER" --add-assignee ConorWaldron
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
