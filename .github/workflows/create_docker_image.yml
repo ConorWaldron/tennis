@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_push_to_registry_summer_leageu:
-    name: Build and Push SummerLeagueApp Image to Docker Hub
+  build_and_push_to_registry:
+    name: Build and Push Images to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -19,17 +19,35 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
+      - name: Extract metadata (tags, labels) for SummerLeagueApp Docker repo 
+        id: meta_summer
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: conorwaldron512/summer_league_webapp_automated
       
-      - name: Build and push Docker image
+      - name: Build and push SummerLeagueApp Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_summer.outputs.tags }}
+          labels: ${{ steps.meta_summer.outputs.labels }}
+
+      - name: Extract metadata (tags, labels) for WinterLeagueApp Docker repo 
+        id: meta_winter
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: conorwaldron512/winter_league_webapp_automated
+      
+      - name: Build and push WinterLeagueApp Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile.winter
+          push: true
+          tags: ${{ steps.meta_winter.outputs.tags }}
+          labels: ${{ steps.meta_winter.outputs.labels }}
+
+
+   
