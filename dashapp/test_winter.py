@@ -1,52 +1,65 @@
 '''
-run with    pytest tests_winter.py -vv
-if pytest is not installed properly, you can try to run with python -m pytest tests_winter.py -vv
+run with    pytest test_winter.py -vv
+if pytest is not installed properly, you can try to run with python -m pytest test_winter.py -vv
 '''
 
 import pytest
 import pandas as pd
+import os
 
 from dashapp.eligibility_rules import team_played_before, winter_lg_doubles_team_and_class_checker,\
     winter_lg_doubles_reg_6_right_order, team_tied, has_6_unique_reg_players, winter_lg_doubles_previous_orders
 
+def read_file_with_absolute_path(relative_path):
+    """
+    :param relative_path: str
+    :return df: pd dataframe
+
+    note we use relative paths so the unit tests run both on the local machine when the filepath is C:/Users/conor/repos/tennis/dashapp
+    and on the github action runner when the filepath is /home/runner/work/tennis/tennis/dashapp
+    """
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    absolute_path = os.path.join(current_directory, relative_path)
+    df = pd.read_csv(absolute_path)
+    return df
+
 
 # Define the fixtures
-
 @pytest.fixture(scope='session')
 def winter_team_7_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     winter_team_7_df = team_df[team_df['Team'] == 7]
     return winter_team_7_df
 
 
 @pytest.fixture(scope='session')
 def winter_team_4_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     winter_team_4_df = team_df[team_df['Team'] == 4]
     return winter_team_4_df
 
 
 @pytest.fixture(scope='session')
 def winter_team_3_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     winter_team_3_df = team_df[team_df['Team'] == 3]
     return winter_team_3_df
 
 
 @pytest.fixture(scope='session')
 def winter_team_2_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     winter_team_2_df = team_df[team_df['Team'] == 2]
     return winter_team_2_df
 
 
 @pytest.fixture(scope='session')
 def winter_team_7_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     team_7_df = team_df[team_df['Team'] == 7]
     lower_teams = team_df[team_df['Team'] > 7][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/winter_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/winter_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 7].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_7_df[['Name', 'Class', 'Team']]
@@ -56,11 +69,11 @@ def winter_team_7_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def winter_team_4_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     team_4_df = team_df[team_df['Team'] == 4]
     lower_teams = team_df[team_df['Team'] > 4][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/winter_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/winter_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 4].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_4_df[['Name', 'Class', 'Team']]
@@ -70,11 +83,11 @@ def winter_team_4_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def winter_team_3_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     team_3_df = team_df[team_df['Team'] == 3]
     lower_teams = team_df[team_df['Team'] > 3][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/winter_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/winter_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 3].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_3_df[['Name', 'Class', 'Team']]
@@ -84,11 +97,11 @@ def winter_team_3_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def winter_team_2_subs_and_lower_class_df():
-    team_df = pd.read_csv('unittest_data/winter_teams_test.csv')
+    team_df = read_file_with_absolute_path('unittest_data/winter_teams_test.csv')
     team_2_df = team_df[team_df['Team'] == 2]
     lower_teams = team_df[team_df['Team'] > 2][['Name', 'Class', 'Team']]
 
-    subs_df = pd.read_csv('unittest_data/winter_subs_test.csv')
+    subs_df = read_file_with_absolute_path('unittest_data/winter_subs_test.csv')
     relevant_subs = subs_df[subs_df['Class'] >= 2].copy()
     relevant_subs['Team'] = 'Sub'
     team_of_interest = team_2_df[['Name', 'Class', 'Team']]
@@ -98,24 +111,24 @@ def winter_team_2_subs_and_lower_class_df():
 
 @pytest.fixture(scope='session')
 def winter_prev_week1():
-    winter_prev_week1 = pd.read_csv('unittest_data/winter_after_week1.csv')
+    winter_prev_week1 = read_file_with_absolute_path('unittest_data/winter_after_week1.csv')
     return winter_prev_week1
 
 
 @pytest.fixture(scope='session')
 def winter_prev_week2():
-    winter_prev_week2 = pd.read_csv('unittest_data/winter_after_week2.csv')
+    winter_prev_week2 = read_file_with_absolute_path('unittest_data/winter_after_week2.csv')
     return winter_prev_week2
 
 
 @pytest.fixture(scope='session')
 def winter_prev_week3():
-    winter_prev_week3 = pd.read_csv('unittest_data/winter_after_week3.csv')
+    winter_prev_week3 = read_file_with_absolute_path('unittest_data/winter_after_week3.csv')
     return winter_prev_week3
 
 @pytest.fixture(scope='session')
 def winter_prev_week4():
-    winter_prev_week4 = pd.read_csv('unittest_data/winter_after_week4.csv')
+    winter_prev_week4 = read_file_with_absolute_path('unittest_data/winter_after_week4.csv')
     return winter_prev_week4
 
 
