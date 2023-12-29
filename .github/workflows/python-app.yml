@@ -23,6 +23,7 @@ jobs:
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
    
-    - name: Test with pytest
+    - name: Test with pytest from within the dashapp directory
+      working-directory: tennis/dashapp
       run: |
         pytest
