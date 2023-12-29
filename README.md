@@ -32,4 +32,7 @@ This web app expects the following files in the assets folder
 * teams.csv a csv file with the columns Name, Team, Class, Position where Position is S1, S2, S3, D1, D1B, D2 or D2B teams are positive integers like 1, 2, 3
 * subs.csv a csv file with the columns Name, Lowest_Class
 
+# GitHub Workflows
+This web app has a number of GitHub workflows including
+* unit_test_workflow.yml which runs all the unit tests every time you create a pull request
 
