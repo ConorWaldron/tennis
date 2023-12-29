@@ -24,6 +24,9 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: conorwaldron512/summer_league_webapp_automated
+
+      - name: Print extracted summer tags
+        run: echo "Extracted Summer Tags are ${{ steps.meta_summer.outputs.tags }}"
       
       - name: Build and push SummerLeagueApp Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
@@ -39,6 +42,9 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: conorwaldron512/winter_league_webapp_automated
+
+      - name: Print extracted winter tags
+        run: echo "Extracted Winter Tags are ${{ steps.meta_winter.outputs.tags }}"
       
       - name: Build and push WinterLeagueApp Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
