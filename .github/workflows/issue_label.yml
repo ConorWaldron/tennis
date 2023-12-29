@@ -1,18 +1,27 @@
-name: Label issues
+name: Label and Assign New Issues
 on:
   issues:
     types:
       - reopened
       - opened
 jobs:
-  conors_label_issues_job:
+  conors_label_assign_issues_job:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+
     steps:
-      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
+      - name: label the issue
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
           LABELS: triage
+
+      - name: assign the issue
+        run: gh issue edit "$NUMBER" --assign  "ConorWaldron"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
