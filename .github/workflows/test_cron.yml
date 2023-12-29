@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: check out code
-        run: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: do a pwd
         run: |
