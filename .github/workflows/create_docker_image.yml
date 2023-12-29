@@ -23,7 +23,7 @@ jobs:
         id: meta_summer
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: conorwaldron512/summer_league_webapp_automated
+          images: conorwaldron512/summer_league_webapp
 
       - name: Print extracted summer tags
         run: echo "Extracted Summer Tags are ${{ steps.meta_summer.outputs.tags }}"
@@ -41,7 +41,7 @@ jobs:
         id: meta_winter
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: conorwaldron512/winter_league_webapp_automated
+          images: conorwaldron512/winter_league_webapp
 
       - name: Print extracted winter tags
         run: echo "Extracted Winter Tags are ${{ steps.meta_winter.outputs.tags }}"
