@@ -26,6 +26,7 @@ At this point another developer could pull your image, and then run it in a cont
 # Deploy docker image to container on cloud
 If you want other users to be able to view your webapp without having to run the docker image themselves, then you need to host your image in the cloud.
 If you want to do this with AWS elastic bean stalk you need to make a dockerun.aws.json file
+If you want to do this with AWS elastic container servicer you also need to make a task definition json file.
 
 # Data requirements
 This web app expects the following files in the assets folder
