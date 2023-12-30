@@ -1,0 +1,22 @@
+{
+  "family": "tennis_webapps",
+  "containerDefinitions": [
+    {
+      "name": "summer_league",
+      "image": "conorwaldron512/summer_league_webapp:main",
+      "portMappings": [
+        {
+          "containerPort": 5000,
+          "hostPort": 8000
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/var/log/nginx",
+          "awslogs-region": "eu-west-1"
+        }
+      }
+    }
+  ]
+}
