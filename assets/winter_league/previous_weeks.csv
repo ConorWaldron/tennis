@@ -1,43 +1,43 @@
 ﻿Team,Position,Week1,Week2,Week3,Week4,Week5
-1,D1,James Brophy,James Brophy,,,
-1,D1B,Andrew Kirwan,Rory Donohoe,,,
-1,D2,Tom Brophy,Andrew Kirwan,,,
-1,D2B,Callum O'Brien,Callum O'Brien,,,
-1,D3,Owen Casey,Tom Brophy,,,
-1,D3B,Rico Raymundo,Rico Raymundo,,,
-2,D1,Mark Dowling,Mark Dowling,,,
-2,D1B,Rico Raymundo,Matthew Cleere,,,
-2,D2,Ivan Ray Casinillo,Ivan Ray Casinillo,,,
-2,D2B,Fernando Mayorga,Fernando Mayorga,,,
-2,D3,Edoardo Bortolato,Edoardo Bortolato,,,
-2,D3B,Frank Fagan,Denis Buckley,,,
-3,D1,Ronan O'Brien,Ronan O'Brien,,,
-3,D1B,Conor Waldron,Conor Waldron,,,
-3,D2,Jimmy McDonogh,Nick Sheridan,,,
-3,D2B,Adam Escalante,Adam Escalante,,,
-3,D3,Andrew Cloonan,Bernard O'Sullivan,,,
-3,D3B,Eoin Donohoe,Eoin Donohoe,,,
-4,D1,Justin Purcell,James Doyle,,,
-4,D1B,James Doyle,Peter Morgan,,,
-4,D2,Peter Morgan,Darren Cappelli,,,
-4,D2B,Darren Cappelli,Kabir Kalia,,,
-4,D3,Kabir Kalia,Josh Burns,,,
-4,D3B,Zeyuan Wang,Zeyuan Wang,,,
-5,D1,Russel Boland,Russel Boland,,,
-5,D1B,Sam Totterdell,Claudio Viotti,,,
-5,D2,Claudio Viotti,John Coffey,,,
-5,D2B,Manus McClafferty,Peter Cloonan,,,
-5,D3,Josh Burns,Brian Masterson,,,
-5,D3B,Andrew Mullins,Andrew Mullins,,,
-6,D1,Rory Aherne,Matthew O'Neill,,,
-6,D1B,Luka Margeta,Tapiwa Sibindi,,,
-6,D2,Tapiwa Sibindi,Cathal Dempsey,,,
-6,D2B,Matthew O'Farrell,Matthew O'Farrell,,,
-6,D3,Eoghan O'Meara,Darragh Moran,,,
-6,D3B,Stephen O'Meara,Jerome O'Drisceoil,,,
-7,D1,Nitin Swarup,Nitin Swarup,,,
-7,D1B,Jason Kirby,Owen McGuigan,,,
-7,D2,Matthew Hanrahan,Matthew Hanrahan,,,
-7,D2B,Alex Riley,Ben Jordan,,,
-7,D3,Ben Jordan,Ken Rosenbaum,,,
-7,D3B,David Vu,Rafael De La Cruz Arribas,,,
+1,D1,James Brophy,James Brophy,James Brophy,James Brophy,James Brophy
+1,D1B,Andrew Kirwan,Rory Donohoe,Rory Donohoe,Rory Donohoe,Rory Donohoe
+1,D2,Tom Brophy,Andrew Kirwan,Andrew Kirwan,Luke Maguire,Andrew Kirwan
+1,D2B,Callum O'Brien,Callum O'Brien,Luke Maguire,Tom Brophy,Luke Maguire
+1,D3,Owen Casey,Tom Brophy,Tom Brophy,Callum O'Brien,Derek Boland
+1,D3B,Matthew Cleere,Rico Raymundo,Mark Dowling,Owen Casey,Owen Casey
+2,D1,Mark Dowling,Mark Dowling,Rico Raymundo,Mark Dowling,Mark Dowling
+2,D1B,Rico Raymundo,Matthew Cleere,Ivan Ray Casinillo,Matthew Cleere,Matthew Cleere
+2,D2,Ivan Ray Casinillo,Ivan Ray Casinillo,Fernando Mayorga,Rico Raymundo,Rico Raymundo
+2,D2B,Fernando Mayorga,Fernando Mayorga,Edoardo Bortolato,Ivan Ray Casinillo,Ivan Ray Casinillo
+2,D3,Edoardo Bortolato,Edoardo Bortolato,Brian Moran,Edoardo Bortolato,Frank Fagan
+2,D3B,Frank Fagan,Denis Buckley,Andrew Cloonan,Denis Buckley,Denis Buckley
+3,D1,Ronan O'Brien,Ronan O'Brien,Ronan O'Brien,Ronan O'Brien,Ronan O'Brien
+3,D1B,Conor Waldron,Conor Waldron,Conor Waldron,Conor Waldron,Neil Stokes
+3,D2,Jimmy McDonogh,Nick Sheridan,Mark Cloonan,Mark Cloonan,Mark Cloonan
+3,D2B,Adam Escalante,Adam Escalante,Bernard O'Sullivan,Adam Escalante,Adam Escalante
+3,D3,Andrew Cloonan,Bernard O'Sullivan,Shane Bergin,Andrew Cloonan,Brian Moran
+3,D3B,Eoin Donohoe,Eoin Donohoe,Eoin Donohoe,Eoin Donohoe,Eoin Donohoe
+4,D1,Justin Purcell,James Doyle,Peter Morgan,James Doyle,Shane Bergin
+4,D1B,James Doyle,Peter Morgan,Darren Cappelli,Shane Bergin,Shane Coyne
+4,D2,Peter Morgan,Darren Cappelli,James Doyle,Peter Morgan,Peter Morgan
+4,D2B,Darren Cappelli,Kabir Kalia,Kabir Kalia,Conor O'Neill,Kabir Kalia
+4,D3,Kabir Kalia,Josh Burns,Josh Burns,Kabir Kalia,Zeyuan Wang
+4,D3B,Zeyuan Wang,Zeyuan Wang,Giacomo Perini,Josh Burns,Josh Burns
+5,D1,Russel Boland,Russel Boland,Russel Boland,Russel Boland,Russel Boland
+5,D1B,Sam Totterdell,Claudio Viotti,Sam Totterdell,Sam Totterdell,Sam Totterdell
+5,D2,Claudio Viotti,John Coffey,Facundo Etcherbarne,John Coffey,Claudio Viotti
+5,D2B,Manus McClafferty,Peter Cloonan,Manus McClafferty,Alan Horgan,Manus McClafferty
+5,D3,Josh Burns,Brian Masterson,John Coffey,Manus McClafferty,John Coffey
+5,D3B,Andrew Mullins,Andrew Mullins,Alan Horgan,Peter Johnston,Alan Horgan
+6,D1,Rory Aherne,Matthew O'Neill,Ryan Johnston,Rory Aherne,Rory Aherne
+6,D1B,Luka Margeta,Tapiwa Sibindi,Tapiwa Sibindi,Tapiwa Sibindi,Tapiwa Sibindi
+6,D2,Tapiwa Sibindi,Cathal Dempsey,Matthew O'Neill,Matthew O'Neill,Matthew O'Neill
+6,D2B,Matthew O'Farrell,Matthew O'Farrell,Cathal Dempsey,Cathal Dempsey,Cathal Dempsey
+6,D3,Eoghan O'Meara,Darragh Moran,Darragh Moran,Darragh Moran,Darragh Moran
+6,D3B,Stephen O'Meara,Jerome O'Drisceoil,Jerome O'Drisceoil,Jerome O'Drisceoil,Jerome O'Drisceoil
+7,D1,Nitin Swarup,Nitin Swarup,Eoghan O'Meara,Eoghan O'Meara,Eoghan O'Meara
+7,D1B,Jason Kirby,Owen McGuigan,Stephen O'Meara,Stephen O'Meara,Stephen O'Meara
+7,D2,Matthew Hanrahan,Matthew Hanrahan,Nitin Swarup,Nitin Swarup,Nitin Swarup
+7,D2B,Alex Riley,Ben Jordan,Ben Jordan,Owen McGuigan,Owen McGuigan
+7,D3,Ben Jordan,Ken Rosenbaum,Max Lebrocquy,Jason Kirby,Ben Jordan
+7,D3B,David Vu,Rafael De La Cruz Arribas,David Bowe,Cian O'Buachalla,James Slattery
