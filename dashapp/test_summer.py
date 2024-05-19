@@ -27,6 +27,36 @@ def read_file_with_absolute_path(relative_path):
 
 # Define the fixtures
 @pytest.fixture(scope='session')
+def bug_team_6():
+    team_df = read_file_with_absolute_path('unittest_data/bug_teams.csv')
+    bug_team_6 = team_df[team_df['Team'] == 6]
+    return bug_team_6
+
+
+@pytest.fixture(scope='session')
+def bug_team_6_subs_and_lower_class_df():
+    team_df = read_file_with_absolute_path('unittest_data/bug_teams.csv')
+    team_6_df = team_df[team_df['Team'] == 6]
+    lower_teams = team_df[team_df['Team'] > 6][['Name', 'Class', 'Team']]
+
+    subs_df = read_file_with_absolute_path('unittest_data/bug_subs.csv')
+    relevant_subs = subs_df[subs_df['Class'] >= 5].copy()
+    relevant_subs['Team'] = 'Sub'
+    team_of_interest = team_6_df[['Name', 'Class', 'Team']]
+    bug_team_6_subs_and_lower_class_df = pd.concat([relevant_subs, lower_teams, team_of_interest], ignore_index=True)
+    return bug_team_6_subs_and_lower_class_df
+
+
+@pytest.fixture(scope='session')
+def bug_prev_week1():
+    bug_prev_week1 = read_file_with_absolute_path('unittest_data/bug_previous_week1.csv')
+    return bug_prev_week1
+
+
+
+
+# Define the fixtures
+@pytest.fixture(scope='session')
 def summer_team_7_df():
     team_df = read_file_with_absolute_path('unittest_data/summer_teams_test.csv')
     summer_team_7_df = team_df[team_df['Team'] == 7]
@@ -212,7 +242,7 @@ def summer_team_4_same_as_week2_wrong_order():
 
 
 @pytest.fixture(scope='session')
-def summer_team_4_singles_out_order():
+def summer_team_4_singles_out_of_singles_registration_order():
     summer_team_4_singles_out_order = {
         'S1': "Adam Escalante",
         'S2': "Shane Bergin",
@@ -336,6 +366,63 @@ def summer_invalid_team_7_team_tied():
     }
     return summer_invalid_team_7_team_tied
 
+########################################################################################################################
+
+def test_bug(bug_team_6, bug_team_6_subs_and_lower_class_df, bug_prev_week1):
+    """
+    checks bug
+    :return:
+    """
+    summer_proposed_team_6_players = {
+        'S1': "Matthew O'Neill",
+        'S2': "Cathal Dempsey",
+        'S3': "Tommy Hayes",
+        'D1': "Paulo Botti",
+        'D1B': "Robbie O'Flynn",
+        'D2': "Tommy Collins",
+        'D2B': "Eoghan O'Meara",
+    }
+
+    expected_value = True, None
+    expected_value_3 = False, "You are playing Matthew O'Neill ahead of Cathal Dempsey but Cathal Dempsey was registered ahead at singles 2, while Matthew O'Neill was registered at singles 3"
+
+
+
+    actual_value_1 = has_7_unique_reg_players(proposed_team=summer_proposed_team_6_players,
+                                            registered_team=bug_team_6,
+                                            team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                            previous_weeks=bug_prev_week1)
+    assert expected_value == actual_value_1
+
+    actual_value_2 = team_played_before(proposed_team=summer_proposed_team_6_players,
+                                              registered_team=bug_team_6,
+                                              team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                              previous_weeks=bug_prev_week1)
+    assert expected_value == actual_value_2
+
+    actual_value_3 = singles_right_order(proposed_team=summer_proposed_team_6_players,
+                                              registered_team=bug_team_6,
+                                              team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                              previous_weeks=bug_prev_week1)
+    assert expected_value_3 == actual_value_3
+
+    actual_value_4 = summer_lg_doubles_team_and_class_checker(proposed_team=summer_proposed_team_6_players,
+                                              registered_team=bug_team_6,
+                                              team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                              previous_weeks=bug_prev_week1)
+    assert expected_value == actual_value_4
+
+    actual_value_5 = summer_lg_doubles_right_order(proposed_team=summer_proposed_team_6_players,
+                                              registered_team=bug_team_6,
+                                              team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                              previous_weeks=bug_prev_week1)
+    assert expected_value == actual_value_5
+
+    actual_value_6 = team_tied(proposed_team=summer_proposed_team_6_players,
+                                                   registered_team=bug_team_6,
+                                                   team_subs_and_lower_teams=bug_team_6_subs_and_lower_class_df,
+                                                   previous_weeks=bug_prev_week1)
+    assert expected_value == actual_value_6
 
 #@pytest.mark.skip
 def test_has_7_unique_reg_players(summer_proposed_team_6_players, summer_proposed_team_same_player_twice, summer_proposed_team_not_valid_sub,
@@ -385,7 +472,7 @@ def test_team_played_before(summer_valid_team_4, summer_reg_team_4_wrong_order, 
 
 
 # @pytest.mark.skip
-def test_singles_right_order(summer_valid_team_4, summer_team_4_singles_out_order,
+def test_singles_right_order(summer_valid_team_4, summer_team_4_singles_out_of_singles_registration_order,
                              summer_team_4_singles_out_order_class, summer_team_4_singles_out_order_team,
                              summer_team_4_df, summer_team_4_subs_and_lower_class_df, summer_prev_week2):
     """
@@ -398,9 +485,15 @@ def test_singles_right_order(summer_valid_team_4, summer_team_4_singles_out_orde
     actual_value = singles_right_order(summer_valid_team_4, summer_team_4_df, summer_team_4_subs_and_lower_class_df, summer_prev_week2)
     assert expected_value == actual_value
 
-    expected_value = False, 'You are playing Shane Bergin ahead of Conor Waldron but that violates a previous weeks order'
-    actual_value = singles_right_order(summer_team_4_singles_out_order, summer_team_4_df, summer_team_4_subs_and_lower_class_df, summer_prev_week2)
+    expected_value = False, 'You are playing Shane Bergin ahead of Conor Waldron but Conor Waldron was registered ahead at singles 2, while Shane Bergin was registered at singles 3'
+    actual_value = singles_right_order(summer_team_4_singles_out_of_singles_registration_order, summer_team_4_df, summer_team_4_subs_and_lower_class_df, summer_prev_week2)
     assert expected_value == actual_value
+
+    # need to find a new example to test this, as now this violates the registration order which gets triggered first
+    #expected_value = False, 'You are playing Shane Bergin ahead of Conor Waldron but that violates a previous weeks order'
+    #actual_value = singles_right_order(summer_team_4_singles_out_of_singles_registration_order, summer_team_4_df,
+    #                                   summer_team_4_subs_and_lower_class_df, summer_prev_week2)
+    #assert expected_value == actual_value
 
     expected_value = False, 'You are playing Brian Masterson (class 5) ahead of Conor Waldron (class 4)'
     actual_value = singles_right_order(summer_team_4_singles_out_order_class, summer_team_4_df, summer_team_4_subs_and_lower_class_df, summer_prev_week2)
