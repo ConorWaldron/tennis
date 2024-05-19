@@ -243,7 +243,7 @@ def summer_team_4_same_as_week2_wrong_order():
 
 @pytest.fixture(scope='session')
 def summer_team_4_singles_out_of_singles_registration_order():
-    summer_team_4_singles_out_order = {
+    summer_team_4_singles_out_of_singles_registration_order = {
         'S1': "Adam Escalante",
         'S2': "Shane Bergin",
         'S3': "Conor Waldron",
@@ -252,7 +252,7 @@ def summer_team_4_singles_out_of_singles_registration_order():
         'D2': "Peter Morgan",
         'D2B': "Andrew Synnott",
     }
-    return summer_team_4_singles_out_order
+    return summer_team_4_singles_out_of_singles_registration_order
 
 
 @pytest.fixture(scope='session')
