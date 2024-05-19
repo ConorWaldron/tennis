@@ -69,12 +69,49 @@ def singles_right_order(proposed_team, registered_team, team_subs_and_lower_team
     Checks that no singles player is playing above someone of a better class
     Checks that no singles player is playing above someone from a better team
 
+    TODO fix this, Matthew O'Neill Bug
+    Checks that no signles player is playing above someone who is registered at a higher singles position
+
     :param proposed_team: dict with key:val like 'S1':'Conor Waldron', it will always have 7 entires one for each S1, S2, S3, D1, D1b, D2, D2b
     :param registered_team: pd df with columns Name, Team, Class, Position for the registered team
     :param team_subs_and_lower_teams: pd df with columns Name, Class and Team for team of interest and all lower teams, and all subs of class >= class of team of interest
     :param previous_weeks: pd df with columns Team, Position, Week1, Week2...
     :return: bool, str: the string is the reason why the test failed if it failed
     """
+    # used to get position in proposed team from the player name
+    def get_key_from_value(d, value):
+        return next((key for key, val in d.items() if val == value), None)
+
+    registered_singles_1 = registered_team[registered_team['Position'] == 'S1']['Name'].iloc(0)[0]
+    registered_singles_2 = registered_team[registered_team['Position'] == 'S2']['Name'].iloc(0)[0]
+    registered_singles_3 = registered_team[registered_team['Position'] == 'S3']['Name'].iloc(0)[0]
+    registered_singles_players = set([registered_singles_1, registered_singles_2, registered_singles_3])
+
+    proposed_singles_1 = proposed_team['S1']
+    proposed_singles_2 = proposed_team['S2']
+    proposed_singles_3 = proposed_team['S3']
+    proposed_singles_players = set([proposed_singles_1, proposed_singles_2, proposed_singles_3])
+
+    # we only need to check the singles registration order if 2 or more of the proposed players are registered singles players
+    set_registered_s_playing_s = registered_singles_players & proposed_singles_players
+
+    if len(set_registered_s_playing_s) >= 2:
+        # check that the registered order is being respected
+        for player in set_registered_s_playing_s:
+            proposed_position = int(get_key_from_value(proposed_team, player)[1])
+            registered_position = int(registered_team[registered_team['Name']==player]['Position'].iloc(0)[0][1])
+
+            # the other registered players are...
+            for other_player in set_registered_s_playing_s:
+                if player != other_player:
+                    other_player_proposed_position = int(get_key_from_value(proposed_team, other_player)[1])
+                    other_player_registered_position = int(registered_team[registered_team['Name'] == other_player]['Position'].iloc(0)[0][1])
+
+                    if registered_position < other_player_registered_position:
+                        # you are registered at a better level than this player, you have to play higher than them
+                        if proposed_position > other_player_proposed_position:
+                            return False, f'You are playing {other_player} ahead of {player} but {player} was registered ahead at singles {registered_position}, while {other_player} was registered at singles {other_player_registered_position}'
+
     for single_pos in ['S1', 'S2']:  # dont need to check S3
         player = proposed_team[single_pos]
 
