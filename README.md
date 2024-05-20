@@ -1,6 +1,11 @@
 # tennis
 web app for checking DLTC league team eligibility
 
+# Ladies
+docker build -f Dockerfile_ladies_summer -t conorwaldron512/ladies_summer_league_webapp:1.1 .
+docker push conorwaldron512/ladies_summer_league_webapp:1.1
+
+
 # Docker Tips
 You can create a docker image using the Dockerfile by running the below command from the same folder as where the docker image is saved as that is what the '.' is referring to in the command.
 'docker build -t conorwaldron512/summer_league_webapp:1.1 .' where the :1.1 indicates its version 1.1
