@@ -57,7 +57,7 @@ gender_dropdown = html.Div([
     dcc.Dropdown(
         id='gender-dropdown',
         options=[{'label': gender, 'value': gender} for gender in ['Male', 'Female']],
-        value=None,  # Set the default value to be None
+        value='Male',  # Set the default value to be None
         placeholder="Please select gender"  # Set the placeholder text
     ),
     html.Div(id='selected-gender-output')
@@ -74,6 +74,17 @@ team_dropdown = html.Div([
     html.Div(id='selected-team-output')
 ])
 
+
+left_right_sections_team_gender = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(team_dropdown, width=5),
+                dbc.Col(gender_dropdown, width=7)
+            ]
+        )
+    ]
+)
 
 team_file = html.Div([
             html.H6('teams.xlsx', style={'textAlign': 'center'}),
@@ -113,8 +124,7 @@ columns_for_upload = dbc.Container(
 
 drop_down_menus = html.Div(
     [
-        #gender_dropdown,
-        team_dropdown,
+        left_right_sections_team_gender,
         html.Br(),
         html.H4('Upload your own team information'),
         html.P('This website comes with team information that is pre-loaded by the website maintainer but if you want to upload team information for another club you can do this here by downloading the three template files, modifying them with your team information and uploading them to the website in the sections below.'),
