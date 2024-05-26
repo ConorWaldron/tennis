@@ -14,7 +14,7 @@ server = app.server      # exposes server of dash app as an objective that gunic
 app.title = 'Summer League Eligibility Checker'  # set the title to appear in the tab
 
 
-########################### Define all my data objects #################################################################
+############### Define all my data objects for the mens teams (the ladies are defined in the call backs) ##############
 
 reg_team = pd.read_csv('../assets/summer_league/teams.csv')
 reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
@@ -28,19 +28,6 @@ reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Posit
 registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
 registered_players_list = registered_players_df['Name'].tolist()
 
-########################### Define all my data objects for the ladies ##################################################
-
-reg_team_ladies = pd.read_csv('../assets/summer_league/ladies_teams.csv')
-reg_team_relevant_ladies = reg_team_ladies[['Team', 'Position', 'Name']]
-reg_team_relevant_ladies = reg_team_relevant_ladies.rename(columns={'Name': 'Registered'})
-
-reg_subs_ladies = pd.read_csv('../assets/summer_league/ladies_subs.csv')
-
-prev_weeks_ladies = pd.read_csv('../assets/summer_league/ladies_previous_weeks.csv')
-reg_team_prev_weeks_ladies = pd.merge(reg_team_relevant_ladies, prev_weeks_ladies, on=['Team', 'Position'])
-
-registered_players_df_ladies = pd.concat([reg_team_ladies[['Name', 'Class']], reg_subs_ladies[['Name', 'Class']]])
-registered_players_list_ladies = registered_players_df_ladies['Name'].tolist()
 
 ########################### Define all my Styles #####################################################################
 
