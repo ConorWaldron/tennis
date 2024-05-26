@@ -14,7 +14,7 @@ server = app.server      # exposes server of dash app as an objective that gunic
 app.title = 'Summer League Eligibility Checker'  # set the title to appear in the tab
 
 
-########################### Define all my data objects #####################################################################
+############### Define all my data objects for the mens teams (the ladies are defined in the call backs) ##############
 
 reg_team = pd.read_csv('../assets/summer_league/teams.csv')
 reg_team_relevant = reg_team[['Team', 'Position', 'Name']]
@@ -27,6 +27,7 @@ reg_team_prev_weeks = pd.merge(reg_team_relevant, prev_weeks, on=['Team', 'Posit
 
 registered_players_df = pd.concat([reg_team[['Name', 'Class']], reg_subs[['Name', 'Class']]])
 registered_players_list = registered_players_df['Name'].tolist()
+
 
 ########################### Define all my Styles #####################################################################
 
@@ -57,7 +58,7 @@ gender_dropdown = html.Div([
     dcc.Dropdown(
         id='gender-dropdown',
         options=[{'label': gender, 'value': gender} for gender in ['Male', 'Female']],
-        value=None,  # Set the default value to be None
+        value='Male',  # Set the default value to be None
         placeholder="Please select gender"  # Set the placeholder text
     ),
     html.Div(id='selected-gender-output')
@@ -74,6 +75,17 @@ team_dropdown = html.Div([
     html.Div(id='selected-team-output')
 ])
 
+
+left_right_sections_team_gender = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(team_dropdown, width=5),
+                dbc.Col(gender_dropdown, width=7)
+            ]
+        )
+    ]
+)
 
 team_file = html.Div([
             html.H6('teams.xlsx', style={'textAlign': 'center'}),
@@ -113,8 +125,7 @@ columns_for_upload = dbc.Container(
 
 drop_down_menus = html.Div(
     [
-        #gender_dropdown,
-        team_dropdown,
+        left_right_sections_team_gender,
         html.Br(),
         html.H4('Upload your own team information'),
         html.P('This website comes with team information that is pre-loaded by the website maintainer but if you want to upload team information for another club you can do this here by downloading the three template files, modifying them with your team information and uploading them to the website in the sections below.'),
@@ -300,86 +311,127 @@ app.layout = content
     Output('team-store', 'data'),
     Output('team_upload_error', 'children'),
     Input('uploadteam', 'contents'),
+    Input('gender-dropdown', 'value'),
     prevent_initial_call=True
 )
-def update_team_file(contents):
+def update_team_file(contents, selected_gender):
     ctx = callback_context
-    if not ctx.triggered_id:
-        raise PreventUpdate
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
+    if triggered_id == 'uploadteam' and contents is not None:
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
 
-    # Assuming the uploaded file is a CSV file
-    df = pd.read_excel(io.BytesIO(decoded))
+        # Assuming the uploaded file is a CSV file
+        df = pd.read_excel(io.BytesIO(decoded))
 
-    # Check for expected column names
-    expected_columns = ['Name', 'Team', 'Class', 'Position']
-    if not set(expected_columns).issubset(df.columns):
-        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/teams_template.csv')
-        return old_df.to_dict('records'), warning_message
+        # Check for expected column names
+        expected_columns = ['Name', 'Team', 'Class', 'Position']
+        if not set(expected_columns).issubset(df.columns):
+            warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+            if selected_gender == 'Female':
+                old_df = pd.read_csv('../assets/summer_league/ladies_teams.csv')
+            else:
+                old_df = pd.read_csv('../assets/summer_league/teams.csv')
+            return old_df.to_dict('records'), warning_message
 
-    return df.to_dict('records'), ''
+        return df.to_dict('records'), ''
+
+    else:
+        # If no file uploaded, use the selected gender file
+        if selected_gender == 'Female':
+            df = pd.read_csv('../assets/summer_league/ladies_teams.csv')
+            return df.to_dict('records'), ''
+        else:
+            df = pd.read_csv('../assets/summer_league/teams.csv')
+            return df.to_dict('records'), ''
 
 
 @app.callback(
     Output('sub-store', 'data'),
     Output('sub_upload_error', 'children'),
     Input('uploadsub', 'contents'),
+    Input('gender-dropdown', 'value'),
     prevent_initial_call=True
 )
-def update_sub_file(contents):
+def update_sub_file(contents, selected_gender):
     ctx = callback_context
-    if not ctx.triggered_id:
-        raise PreventUpdate
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
+    if triggered_id == 'uploadsub' and contents is not None:
 
-    # Assuming the uploaded file is a CSV file
-    df = pd.read_excel(io.BytesIO(decoded))
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
 
-    # Check for expected column names
-    expected_columns = ['Name', 'Class']
-    if not set(expected_columns).issubset(df.columns):
-        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/subs_template.csv')
-        return old_df.to_dict('records'), warning_message
+        # Assuming the uploaded file is a CSV file
+        df = pd.read_excel(io.BytesIO(decoded))
 
-    return df.to_dict('records'), ''
+        # Check for expected column names
+        expected_columns = ['Name', 'Class']
+        if not set(expected_columns).issubset(df.columns):
+            warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+            if selected_gender == 'Female':
+                old_df = pd.read_csv('../assets/summer_league/ladies_subs.csv')
+            else:
+                old_df = pd.read_csv('../assets/summer_league/subs.csv')
+            return old_df.to_dict('records'), warning_message
+
+        return df.to_dict('records'), ''
+
+    else:
+        # If no file uploaded, use the selected gender file
+        if selected_gender == 'Female':
+            df = pd.read_csv('../assets/summer_league/ladies_subs.csv')
+            return df.to_dict('records'), ''
+        else:
+            df = pd.read_csv('../assets/summer_league/subs.csv')
+            return df.to_dict('records'), ''
 
 
 @app.callback(
     Output('previous-week-store', 'data'),
     Output('prev_week_upload_error', 'children'),
     Input('uploadprevious', 'contents'),
+    Input('gender-dropdown', 'value'),
     prevent_initial_call=True
 )
-def update_prev_week_file(contents):
+def update_prev_week_file(contents, selected_gender):
     ctx = callback_context
-    if not ctx.triggered_id:
-        raise PreventUpdate
+    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
+    if triggered_id == 'uploadprevious' and contents is not None:
 
-    # Assuming the uploaded file is a CSV file
-    df = pd.read_excel(io.BytesIO(decoded))
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
 
-    # Check for expected column names
-    expected_columns = ['Team', 'Position', 'Week1', 'Week2', 'Week3', 'Week4', 'Week5']
-    if not set(expected_columns).issubset(df.columns):
-        warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
-        old_df = pd.read_csv('../assets/summer_league/previous_weeks_template.csv')
-        return old_df.to_dict('records'), warning_message
+        # Assuming the uploaded file is a CSV file
+        df = pd.read_excel(io.BytesIO(decoded))
 
-    return df.to_dict('records'), ''
+        # Check for expected column names
+        expected_columns = ['Team', 'Position', 'Week1', 'Week2', 'Week3', 'Week4', 'Week5']
+        if not set(expected_columns).issubset(df.columns):
+            warning_message = f"Warning: The uploaded Excel file did not contain the required columns {', '.join(expected_columns)}. Upload rejected, still using old values"
+            if selected_gender == 'Female':
+                old_df = pd.read_csv('../assets/summer_league/ladies_previous_weeks.csv')
+            else:
+                old_df = pd.read_csv('../assets/summer_league/previous_weeks.csv')
+            return old_df.to_dict('records'), warning_message
+
+        return df.to_dict('records'), ''
+
+    else:
+        # If no file uploaded, use the selected gender file
+        if selected_gender == 'Female':
+            df = pd.read_csv('../assets/summer_league/ladies_previous_weeks.csv')
+            return df.to_dict('records'), ''
+        else:
+            df = pd.read_csv('../assets/summer_league/previous_weeks.csv')
+            return df.to_dict('records'), ''
 
 
 
 
-"""
+
 @app.callback(
     Output('selected-gender-output', 'children'),
     [Input('gender-dropdown', 'value')]
@@ -389,7 +441,7 @@ def update_gender_output(selected_gender):
         return f"You have selected gender: {selected_gender}"
     else:
         return "Please select gender"
-"""
+
 
 
 @app.callback(
