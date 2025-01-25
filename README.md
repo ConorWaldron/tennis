@@ -20,6 +20,8 @@ Note that if you are using any custom modules with a Docker webapp, it is easies
 
 If you want to see the file system of your docker container when it is running (because you want to try to upload or download files for example) you can use the commands 'docker exec -it <container_id_or_name> ls -l' to do whatever unix command you want, in this case a ls -l. Or you can use 'docker exec -it <container_id_or_name> /bin/bash' to start a terminal directly in that container so you can work away as normal with cd or ls etc.
 
+
+## Push image to cloud
 If you want to publish your docker file to dockerhub you can use 'docker push conorwaldron512/summer_league_webapp:1.2' or 'docker push conorwaldron512/winter_league_webapp:1.0' and then you can see the file on the docker hub wesbite at https://hub.docker.com/
 At this point another developer could pull your image, and then run it in a container on their own local machine.
 
