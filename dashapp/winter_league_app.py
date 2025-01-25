@@ -656,8 +656,9 @@ def update_table_registered_player_data(selected_team, team_data, sub_data):
     # Filter the registered_players_df based on the selected_team
     team_df = pd.DataFrame(team_data) if team_data else reg_team
     sub_df = pd.DataFrame(sub_data) if sub_data else reg_subs
+    class_of_selected_team = team_df[team_df['Team'] == selected_team]['Class'].iloc[0]
     registered_players_df_local = pd.concat([team_df[['Name', 'Class']], sub_df[['Name', 'Class']]])
-    filtered_df = registered_players_df_local[registered_players_df_local['Class'] >= selected_team]
+    filtered_df = registered_players_df_local[registered_players_df_local['Class'] >= class_of_selected_team]
     sorted_filtered_df = filtered_df.sort_values(by=['Class', 'Name'])
     # Convert the filtered DataFrame to dict to update DataTable data
     return sorted_filtered_df.to_dict('records')
