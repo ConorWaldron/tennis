@@ -1,50 +1,50 @@
 ﻿Team,Position,Week1,Week2,Week3,Week4,Week5
-1,S1,Caleb Mok,George Shepherd,Callum O'Brien,James Brophy,
-1,S2,Sahir Mangat,Ronan Doyle,James Brophy,Bernard O'Sullivan,
-1,S3,James Brophy,James Brophy,Sahir Mangat,Colm Kelly,
-1,D1,Callum O'Brien,Andrew Kirwan,Fernando Mayorga,Owen Casey,
-1,D1B,George Shepherd,Freddie Bracken,Matthew Cleere,Sahir Mangat,
-1,D2,Andrew Kirwan,Sahir Mangat,Conor Waldron,Andrew Kirwan,
-1,D2B,Freddie Bracken,Callum O'Brien,Ruairi O'hOisin,Callum O'Brien,
-2,S1,Matthew Cleere,Tom Brophy,Mark Dowling,Tom Brophy,
-2,S2,Tom Brophy,Brian Moran,Tom Brophy,Nicholas Sheridan,
-2,S3,Nicholas Sheridan,Frank Fagan,Caleb Mok,Caleb Mok,
-2,D1,Ivan Ray Casinillo, Ivan Ray Casinillo,Ivan Ray Casinillo,Ivan Ray Casinillo,
-2,D1B,Rico Raymundo,Rico Raymundo,Rico Raymundo,Rico Raymundo,
-2,D2,Denis Buckley,Edoardo Bortolato,Ronan Doyle,Edoardo Bortolato,
-2,D2B,Ronan Doyle,Jimmy McDonogh,Edoardo Bortolato,Matthew Cleere,
-3,S1,Fernando Mayorga,Denis Buckley,Frank Fagan,Denis Buckley,
-3,S2,Conor Waldron,Mark Wright,Fernando Mayorga,Frank Fagan,
-3,S3,Jedrzej Nowe,Mark Cloonan,Josh Byrne,Fernando Mayorga,
-3,D1,Tobias Hermann,Bernard O'Sullivan,Brian Moran,Conor Waldron,
-3,D1B,Jimmy McDonogh,James Doyle,Conor O'Neill,Jimmy McDonogh,
-3,D2,Darren Cappelli,Eoin Donohoe,James Harvey,Matthew O'Neill,
-3,D2B,Matthew O'Neill,George Pope,Mark McNally,Neil Stokes,
-4,S1,Mark Cloonan,Matthew O'Neill,Mark Wright,Mark Wright,
-4,S2,Josh Byrne,Mark McNally,Josh Byrne,Josh Byrne,
-4,S3,Denis Hristev,Denis Hristev,Denis Hristev,Denis Hristev,
-4,D1,Jerry Sheehan,Kabir Kalia,Russell Boland,Russell Boland,
-4,D1B,Neil Stokes,Andrew Synott,Darren Cappelli,Sam Totterdell,
-4,D2,James Doyle,Tommy Collins,James Doyle,Peter Morgan,
-4,D2B,Peter Morgan,Tommy Hayes,Peter Morgan,Neil Stokes,
-5,S1,David Voegele,Jedrzej Nowe,Jedrzej Nowe,Jedrzej Nowe,
-5,S2,Zeyuan Wang,Zeyuan Wang,Zeyuan Wang,Zeyuan Wang,
-5,S3,Mark McNally,Alberto Armas,Rupert Aichbauer,Thomas Callan,
+1,S1,Caleb Mok,George Shepherd,Callum O'Brien,James Brophy,Colm Kelly
+1,S2,Sahir Mangat,Ronan Doyle,James Brophy,Bernard O'Sullivan,Andrew Kirwan
+1,S3,James Brophy,James Brophy,Sahir Mangat,Colm Kelly,Sahir Mangat
+1,D1,Callum O'Brien,Andrew Kirwan,Fernando Mayorga,Owen Casey,Rico Raymundo
+1,D1B,George Shepherd,Freddie Bracken,Matthew Cleere,Sahir Mangat,Ivan Ray Casinillo
+1,D2,Andrew Kirwan,Sahir Mangat,Conor Waldron,Andrew Kirwan,James Brophy
+1,D2B,Freddie Bracken,Callum O'Brien,Ruairi O'hOisin,Callum O'Brien,Owen Casey
+2,S1,Matthew Cleere,Tom Brophy,Mark Dowling,Tom Brophy,Brian Moran
+2,S2,Tom Brophy,Brian Moran,Tom Brophy,Nicholas Sheridan,Frank Fagan
+2,S3,Nicholas Sheridan,Frank Fagan,Caleb Mok,Caleb Mok,Nicholas Sheridan
+2,D1,Ivan Ray Casinillo, Ivan Ray Casinillo,Ivan Ray Casinillo,Ivan Ray Casinillo,Edoardo Bortolato
+2,D1B,Rico Raymundo,Rico Raymundo,Rico Raymundo,Rico Raymundo,Matthew Cleere
+2,D2,Denis Buckley,Edoardo Bortolato,Ronan Doyle,Edoardo Bortolato,Fernando Mayorga
+2,D2B,Ronan Doyle,Jimmy McDonogh,Edoardo Bortolato,Matthew Cleere,Caleb Mok
+3,S1,Fernando Mayorga,Denis Buckley,Frank Fagan,Denis Buckley,Denis Buckley
+3,S2,Conor Waldron,Mark Wright,Fernando Mayorga,Frank Fagan,Conor Waldron
+3,S3,Jedrzej Nowe,Mark Cloonan,Josh Byrne,Fernando Mayorga,Adam Escalante
+3,D1,Tobias Hermann,Bernard O'Sullivan,Brian Moran,Conor Waldron,Bernard O'Sullivan
+3,D1B,Jimmy McDonogh,James Doyle,Conor O'Neill,Jimmy McDonogh,Peter Morgan
+3,D2,Darren Cappelli,Eoin Donohoe,James Harvey,Matthew O'Neill,Alan Horgan
+3,D2B,Matthew O'Neill,George Pope,Mark McNally,Neil Stokes,Ryan Johnston
+4,S1,Mark Cloonan,Matthew O'Neill,Mark Wright,Mark Wright,Mark Wright
+4,S2,Josh Byrne,Mark McNally,Josh Byrne,Josh Byrne,Josh Byrne
+4,S3,Denis Hristev,Denis Hristev,Denis Hristev,Denis Hristev,Denis Hristev
+4,D1,Jerry Sheehan,Kabir Kalia,Russell Boland,Russell Boland,Mark Cloonan
+4,D1B,Neil Stokes,Andrew Synott,Darren Cappelli,Sam Totterdell,Neil Stokes
+4,D2,James Doyle,Tommy Collins,James Doyle,Peter Morgan,Russell Boland
+4,D2B,Peter Morgan,Tommy Hayes,Peter Morgan,Neil Stokes,James Doyle
+5,S1,David Voegele,Jedrzej Nowe,Jedrzej Nowe,Jedrzej Nowe,David Voegele
+5,S2,Zeyuan Wang,Zeyuan Wang,Zeyuan Wang,Zeyuan Wang,Tommy Hayes
+5,S3,Mark McNally,Alberto Armas,Rupert Aichbauer,Thomas Callan,Thomas Callan
 5,D1,Peter Cloonan,Peter Morgan,Kabir Kalia,Kabir Kalia,
-5,D1B,Alan Horgan,Kabir Kalia,Alan Horgan,Alberto Armas,
-5,D2,Kabir Kalia,Peter Cloonan,Thomas Callan,Ruairi O'hOisin,
-5,D2B,Thomas Callan,David Redmond,Tommy Hayes,Innis Collins Smith,
-6,S1,Darragh Moran,Paulo Botti,Paulo Botti,Paulo Botti,
-6,S2,Matthew Martin,Claudio Viotti,Tabi Ojong,Claudio Viotti,
-6,S3,Alessandro Maienza,Darragh Moran,luka Margeta,Luka Margeta,
-6,D1,Giacomo Perini,Rory Ahearne,Andrew Mullins,Rory Ahearne,
-6,D1B,Cathal Dempsey,Cathal Dempsey,David Redmond,Giacomo Perini,
-6,D2,Jerome O'Drisceoil,John Coffey,John Coffey,Tapiwa Sibindi,
-6,D2B,Tapiwa Sibindi,Andrew Mullins,Jerome O'Drisceoil,Alessandro Maienza,
-7,S1,Denis Hristev,Tabi Ojong,Tabi Ojong,Tabi Ojong,
-7,S2,George Pope,George Pope,George Pope,George Pope,
-7,S3,Mykyta Babanin,Alessandro Maienza,Mykyta Babanin,Tommy Collins,
-7,D1,Nitin Swarup,Mykyta Babanin,Nitin Swarup,Nitin Swarup,
-7,D1B,David Gannon,Leo Collins,Andrew Kirby,Leo Collins,
-7,D2,Tommy Collins,Ignacio Nicholson,Ignacio Nicholson,Jason Kirby,
-7,D2B,Ignacio Nicholson,Tommy Collins,Tommy Collins,Stephen O'Meara,
+5,D1B,Alan Horgan,Kabir Kalia,Alan Horgan,Alberto Armas,Simon O'Hare
+5,D2,Kabir Kalia,Peter Cloonan,Thomas Callan,Ruairi O'hOisin,Kabir Kalia
+5,D2B,Thomas Callan,David Redmond,Tommy Hayes,Innis Collins Smith,Alberto Armas
+6,S1,Darragh Moran,Paulo Botti,Paulo Botti,Paulo Botti,Vishal Singh
+6,S2,Matthew Martin,Claudio Viotti,Tabi Ojong,Claudio Viotti,Giacomo Perini
+6,S3,Alessandro Maienza,Darragh Moran,luka Margeta,Luka Margeta,Alessandro Maienza
+6,D1,Giacomo Perini,Rory Ahearne,Andrew Mullins,Rory Ahearne,David Redmond
+6,D1B,Cathal Dempsey,Cathal Dempsey,David Redmond,Giacomo Perini,Paddy Jordan
+6,D2,Jerome O'Drisceoil,John Coffey,John Coffey,Tapiwa Sibindi,Alexander Franzen
+6,D2B,Tapiwa Sibindi,Andrew Mullins,Jerome O'Drisceoil,Alessandro Maienza,Jerome O'Drisceoil
+7,S1,Denis Hristev,Tabi Ojong,Tabi Ojong,Tabi Ojong,NA
+7,S2,George Pope,George Pope,George Pope,George Pope,NA
+7,S3,Mykyta Babanin,Alessandro Maienza,Mykyta Babanin,Tommy Collins,NA
+7,D1,Nitin Swarup,Mykyta Babanin,Nitin Swarup,Nitin Swarup,NA
+7,D1B,David Gannon,Leo Collins,Andrew Kirby,Leo Collins,NA
+7,D2,Tommy Collins,Ignacio Nicholson,Ignacio Nicholson,Jason Kirby,NA
+7,D2B,Ignacio Nicholson,Tommy Collins,Tommy Collins,Stephen O'Meara,NA
